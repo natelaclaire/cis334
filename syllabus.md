@@ -12,7 +12,7 @@ This course is delivered entirely online in an asynchronous format. Recorded les
 
 ## Course Description
 
-This hands-on PHP Programming course is designed to provide the student with a theoretical foundation and applied skills required to use PHP as a Web publishing and data management tool. An integrated approach to Web development ties it to the HTML and CSS environments and establishes PHP’s place in the Web Development process. Functional examples and comprehensive hands-on lab activities will reinforce the concepts presented. (3 credits)
+The integration of the PHP programming language with MySQL database technology enables PHP developers to build database-enabled Web applications. During the course, students will walk through the development of a complete social media site, learning to write secure scripts that allow visitors to add information and dynamically display filtered data from a MySQL database. At the end of the class, student will have reusable code templates to create dynamic, database driven Web applications. *Prerequisite:* CIS 333. (3 credits)
 
 ## Instructor
 ![Nate LaClaire](images/laclaire-nathaniel-183x183.jpg "Nate LaClaire")
@@ -45,38 +45,32 @@ Any communications sent from my UMA email or from the Brightspace course will go
   - Publication date: 2010
   - 712 pages
   - Softcover
+- Optional: [_PHP Crash Course: The Complete, Modern, Hands-On Guide_](https://nostarch.com/php-crash-course)
+  - by Matt Smith
+  - ISBN-13: 9781718502529
+  - Publication date: December 2024
+  - 728 pages
+  - Softcover
 - Additional resources provided in Brightspace
 
 ## Required Software
 
 Students will need a free GitHub account. Instructions will be provided in the first module. We will use GitHub Codespaces, a Web-based development environment, to complete assignments.
 
-## Course Objectives
-
-This course will introduce students to concepts used in PHP programming. This will include:
-
-- PHP scripts
-- Functions and control structures
-- String manipulation
-- User input
-- Files and directories
-- Arrays
-- State information
-
-Expect to work an average of six to nine hours a week on homework assignments, projects, discussion assignments, and studying. This may vary on any particular week depending on class workload.
-
 ## Learning Outcomes
 
 At the completion of the course, the student should be able to:
 
-- Create PHP code blocks
-- Use functions to organize PHP code
-- Learn about variable scope and autoglobal variables
-- Use control structures, nested control structures, and looping structures
-- Construct, parse, and compare text strings and use regular expressions
-- Handle user input from forms and hyperlinks
-- Work with files and directories
-- Manipulate arrays
+- Identify the differences between a static and dynamic Web design.
+- Design and develop a relational database with properly structured tables.
+- Write SQL queries to add, retrieve, modify, and delete database information.
+- Interpret and debug common PHP error messages.
+- Create Web forms and scripts to process information submitted in a form.
+- Write PHP scripts to store HTML form data, protecting the site against SQL injection.
+- Retrieve filtered data from a database and display it on a Web page.
+- Maintain state information using hidden form fields, query strings, cookies, and PHP sessions.
+- Create object-oriented PHP scripts.
+- Organize scripts in an easy-to-understand format.
 
 ## Electronic Learning Tools
 
@@ -101,31 +95,33 @@ To maximize your learning experience, you should:
 - Watch the videos, complete the Applied Learning Activities* along with the instructor, and review any supplementary materials available in Brightspace.
 - Communicate with the instructor if there is a concept that you do not understand.
 - Complete Comprehension Check Quizzes in Brightspace on or before the due date.
-- Complete Reinforcement Exercises* (during even-numbered weeks) on or before the due date.
-- Complete Discovery Projects* (during odd-numbered weeks) on or before the due date.
+- Complete Reinforcement Exercises* on or before the due date.
+- Complete Discovery Projects* on or before the due date.
 
 *Note: The Applied Learning Activities, Reinforcement Exercises, and Discovery Projects will be completed by modifying the code provided via GitHub Classroom assignments and committing your work to the assignment's repository.
 
 | Week        | Lesson / Assignment Topic                                              | Due Date (11:59pm) |
 | ----------- | ---------------------------------------------------------------------- | ------------------ |
-| 1           | Course Overview - Application Setup                                    | May 17             |
-| 2           | Chapter 1 – Getting Started with PHP                                   | May 24             |
-| 3           | Chapter 1 – Discovery Projects - **Final Project Topic Due**           | May 31             |
-| 4           | Chapter 2 – Functions and Control Structures                           | June 7             |
-| 5           | Chapter 2 – Discovery Projects                                         | June 14            |
-| 6           | Chapter 3 – Constructing Text Strings                                  | June 21            |
-| 7           | Chapter 3 – Discovery Projects                                         | June 28            |
-| 8           | Chapter 4 – Coding Forms                                               | July 5             |
-| 9           | Chapter 4 – Discovery Projects                                         | July 12            |
-| 10          | Chapter 5 – File and Directory Handling                                | July 19            |
-| 11          | Chapter 5 – Discovery Projects                                         | July 26            |
-| 12          | Chapter 6 - Arrays                                                     | August 2           |
-| 13          | Chapter 6 – Discovery Projects                                         | August 9           |
-| 14          | Professional Tooling, Workflows, and Server Interaction Scenarios - **Final Project and Final Exam Due!**      | August 16          |
+| 1           | Course Introduction & Dynamic Web Concepts                             | September 6        |
+| 2           | Chapter 10 – Developing Object-Oriented PHP, Part 1                    | September 13       |
+| 3           | Chapter 10 – Developing Object-Oriented PHP, Part 2                    | September 20       |
+| 4           | Chapter 10 – Discovery Projects - **Final Project Topic Due**          | September 27       |
+| 5           | Chapter 7 – Working with Databases and MySQL, Part 1                   | October 4          |
+| 6           | Chapter 7 – Working with Databases and MySQL, Part 2                   | October 11         |
+| 7           | Chapter 7 – Discovery Projects                                         | October 18         |
+| 8           | Chapter 8 – Manipulating MySQL Databases with PHP, Part 1              | October 25         |
+| 9           | Chapter 8 – Manipulating MySQL Databases with PHP, Part 2              | November 1         |
+| 10          | Chapter 8 – Discovery Projects                                         | November 8         |
+| 11          | Chapter 9 – Managing State Information, Part 1                         | November 15        |
+| 12          | Chapter 9 – Managing State Information, Part 2                         | November 22        |
+| 13          | **Thanksgiving Recess - No Assignments Due**                           | November 29        |
+| 14          | Chapter 9 – Discovery Projects                                         | December 6         |
+| 15          | Appendix E – Error Handling and Debugging                              | December 13        |
+| 16          | Reusable Design Patterns - **Final Project and Final Exam Due!**       | December 20        |
 
 ### Final Project
 
-Each student will create a simple CRUD (create, read, update, delete) Web application as their final project, with data stored in a file. This will utilize the core PHP concepts covered in the course, including PHP syntax, functions, control structures, text manipulation, form handling, file handling, and arrays. A full description of the project along with a grading rubric will be available during the first week of the course, including a sample application topic. Each student will have the choice of either building the application described in the sample or creating their own application that meets the same requirements. Each student will submit their choice of final project topic during the third week of the course.
+Each student will create a simple CRUD (create, read, update, delete) Web application as their final project, with a user authentication system and data stored in a database. This will utilize the core PHP concepts covered in the course, including object-oriented PHP, database management, database manipulation with PHP, state management, and error handling. A full description of the project along with a grading rubric will be available during the first week of the course, including a sample application topic. Each student will have the choice of either building the application described in the sample or creating their own application that meets the same requirements. Each student will submit their choice of final project topic during the fourth week of the course.
 
 ### Religious Holidays
 

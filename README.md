@@ -1,3 +1,3 @@
-# CIS 333 PHP Programming Course Materials
+# CIS 334 PHP and MySQL Course Materials
 
-These are the course materials for UMA's CIS 333 course for Spring 2025.
+These are the course materials for UMA's CIS 334 course for Fall 2025.
