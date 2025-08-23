@@ -97,6 +97,7 @@ To maximize your learning experience, you should:
 - Complete Comprehension Check Quizzes in Brightspace on or before the due date.
 - Complete Reinforcement Exercises* on or before the due date.
 - Complete Discovery Projects* on or before the due date.
+- Complete Final Exam on or before the due date.
 
 *Note: The Applied Learning Activities, Reinforcement Exercises, and Discovery Projects will be completed by modifying the code provided via GitHub Classroom assignments and committing your work to the assignment's repository.
 
@@ -129,11 +130,12 @@ Students may request accommodation for their observance of a religious holiday. 
 
 ## Grading Criteria
 
-- **20%** of your grade will be determined by Applied Learning Activities.
-- **20%** of your grade will be determined by Reinforcement Exercises.
+- **10%** of your grade will be determined by Applied Learning Activities.
+- **25%** of your grade will be determined by Reinforcement Exercises.
 - **20%** of your grade will be determined by Discovery Projects.
 - **15%** of your grade will be determined by Comprehension Check Quizzes.
-- **25%** of your grade will be determined by the Final Project.
+- **10%** of your grade will be determined by Final Exam.
+- **20%** of your grade will be determined by the Final Project.
 
 A 94-100%, A- 90-93%, B+ 87-89%, B 83-86%, B- 80-82%, C+ 77-79%, C 73-76%, C- 70-72%, D+ 67-69%, D 63-66%, D- 60-62%, F below 60%.
 
