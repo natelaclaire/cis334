@@ -130,7 +130,7 @@ Students may request accommodation for their observance of a religious holiday. 
 
 ## Grading Criteria
 
-- **10%** of your grade will be determined by Applied Learning Activities.
+- **10%** of your grade will be determined by Applied Learning Activities. ***Note:** In order to receive credit for Applied Learning Activities, there must be evidence in your repository that you followed along with the weekly tutorial videos.*
 - **25%** of your grade will be determined by Reinforcement Exercises.
 - **20%** of your grade will be determined by Discovery Projects.
 - **15%** of your grade will be determined by Comprehension Check Quizzes.
