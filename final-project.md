@@ -1,110 +1,90 @@
-# Final Project
+# Final Project: Authenticated CRUD Web Application
 
-Your task for the final project is to develop a simple Web application that allows users to create, view, search, and manage data of some sort. This project will utilize the core PHP concepts covered in the course, including PHP syntax, functions, control structures, text manipulation, form handling, file handling, and arrays.
+Each student will build a simple CRUD (create, read, update, delete) web application with user authentication and a relational database. This project emphasizes object-oriented PHP, database design and manipulation (via PHP), state management, and robust error handling. Students may either implement the sample described below or propose an original topic that meets the same requirements. Your topic choice is due in Week 4.
 
-Requirements:
+## Core Requirements
 
-- The user should be able to perform the following activities:
-  - List records
-  - View individual records
-  - Create records
-  - Search records
-  - View a random record
-- All user input must be validated to prevent errors (e.g., empty fields, invalid characters)
-- Data should be stored in one or more arrays while the application is running
-- Data should be written to and read from a file in a structured format (e.g., JSON or CSV) so that it persists
-- Care should be taken to properly manage scope
-- Optional features for extra credit:
-  - Allow user to edit records
-  - Allow user to delete records
-  - Other more complex features, such as AJAX, pagination, or using an external API (if you have an idea for something in this category, ask me about it before you start working on it to ensure that it will count for extra credit)
+- Tech stack
+   - PHP 8+ (object-oriented style), HTML/CSS, minimal JavaScript as needed
+   - MySQL/MariaDB accessed via PDO with prepared statements
+   - Sessions for state; no full-stack PHP framework required (libraries allowed with approval)
 
----
+- Data model
+   - At least two related tables (e.g., 1-to-many) beyond the `users` table
+   - Provide an Entity Relationship Diagram (ERD) and a `mydb.sql` file that creates tables and optionally seeds the database with test data
 
-## **Submission Requirements**
+- Authentication and authorization
+   - Registration, login, logout; passwords hashed with `password_hash`/`password_verify`
+   - Auth-only areas (e.g., create/edit/delete) protected by session checks
+   - Authorization rule: users can only modify their own records; optional admin role for managing all records
 
-- **Code files**: Include PHP source code and any auxiliary files (e.g., data files, images, CSS).
-- **Documentation**: Provide a brief explanation of your project, including:
-  - How to set up and run the application.
-  - How each PHP concept is used.
-  - Note optional features presented for extra credit.
-- **Screenshots or Video**: Demonstrate the application in action.
+- CRUD functionality
+   - Full create/read/update/delete for a primary resource
+   - Read views include list and detail pages, with search and basic sort; paginate lists if >25 items
 
----
+- Validation, security, and errors
+   - Server-side validation for all inputs; meaningful error messages and sticky forms
+   - Output escaping to prevent XSS; CSRF tokens on all mutating POST forms
+   - Graceful error handling with try/catch for DB operations; log unexpected errors (file-based log is fine)
 
-## **Grading Rubric**
+- Architecture and code quality
+   - Use classes to separate concerns (e.g., Database, Repository/Model, Service, Controller-like handlers)
+   - Keep configuration (DB creds) in a single place (e.g., `config.php`); avoid hard-coding secrets in code
+   - Organize code into folders (`public/`, `src/`, `views/`, `data/` or similar); prefer small, testable functions/methods
 
-| Criteria                               | Weight |
-|----------------------------------------|--------|
-| Functionality (meets requirements)     | 40%    |
-| Code organization and use of functions | 20%    |
-| Proper use of PHP features             | 20%    |
-| Input validation and error handling    | 10%    |
-| Creativity and user interface          | 10%    |
+## Milestones and Deadlines
 
----
+- Week 1: Project brief and sample topic released
+- Week 4: Submit topic selection + draft ERD (tables, fields, relationships)
+- Checkpoint A: Database created; basic Create/Read paths working
+- Checkpoint B: Update/Delete complete; authentication wired up
+- Final Week: Validation and error handling polished; documentation and demo ready
 
-## **Learning Goals**
+Exact dates will be announced in class/Brightspace for your section.
 
-By completing this project, students will:
+## Deliverables
 
-- Practice building dynamic web applications using PHP.
-- Reinforce their understanding of PHP functions, control structures, and arrays.
-- Gain experience with handling user input and file operations in PHP.
-- Develop problem-solving skills for real-world web development scenarios.
+- Source code for the application
+- `mydb.sql` to set up the database schema and seed the tables
+- README with setup/run instructions, assumptions, and how requirements are met
+- Demo credentials (e.g., a sample user and, if implemented, an admin)
+- Screenshots or a short screencast demonstrating key flows
 
----
+## Grading Rubric (100 points)
 
-## **Example Final Project:** **"Dynamic Recipe Manager"**
+- Functional requirements (CRUD, search/sort, pagination if applicable): 30
+- Authentication and authorization (correct, secure, session-based): 15
+- Database design and data access (ERD quality, prepared statements, queries): 15
+- OOP structure and code organization (classes, separation of concerns): 15
+- Validation, security, and error handling (XSS/CSRF, messages, logging): 15
+- UX/UI and documentation (readability, navigation, README, demo assets): 10
 
-### **Objective:**  
+## Sample Application Topic: "Campus Study Groups"
 
-Develop a web application that allows users to create, view, search, and manage recipes.
+Build an app where students can create and join study groups.
 
-### **Project Requirements**
+- Entities: `users`, `groups`, `meetings` (a group has many meetings), and `memberships` (user-to-group)
+- Auth: users register/login, manage their profile
+- CRUD: users can create a group, edit/delete their own groups; view group details and upcoming meetings
+- Search/sort: search groups by course/keywords; sort by newest/most members
+- Authorization: only group owners can edit/delete their group; admins (optional) can manage all
+- Validation/security: required fields, date/time validation, CSRF tokens, escaped output
 
-1. **Homepage**  
-   - Display a list of available recipes stored in a file or an array.
-   - Provide navigation links to add a new recipe, search for recipes, or view a random recipe.
+Students choosing their own topic must achieve an equivalent scope and demonstrate the same competencies.
 
-2. **Add a Recipe**  
-   - Create a form that collects the following input:
-     - Recipe name
-     - Number of servings
-     - Ingredients (comma-separated)
-     - Steps or instructions
-   - Validate user input to ensure all fields are filled out.
-   - Save the recipe details to a file (e.g., `recipes.txt`) in a structured format (e.g., JSON or CSV).
+## Optional Enhancements (extra credit)
 
-3. **View Recipes**  
-   - Read the `recipes.txt` file to retrieve and display all stored recipes.
-   - Show the recipe name, ingredients, and instructions.
+- Password reset flow (token-based); email verification (mock or real)
+- File uploads (e.g., group image) with size/type validation
+- RESTful JSON endpoints for listing/searching; fetch/AJAX UI
+- Improved accessibility and responsive design; client-side validation in addition to server-side
+- Basic unit/integration tests for critical classes (where feasible)
 
-4. **Search Recipes**  
-   - Implement a search feature that allows users to search for recipes by name or ingredient.
-   - Use string parsing and regular expressions to find matches.
-   - Display matching recipes in a user-friendly format.
+## Getting Started (suggested path)
 
-5. **Random Recipe**  
-   - Implement functionality to select and display a random recipe from the list.
-
-6. **Edit and Delete Recipes** (Optional)  
-   - Allow users to edit or delete existing recipes.
-   - Use control structures to handle updates or deletions from the file.
-
-7. **Scale Recipe** (Optional)
-   - Give users the option of viewing the recipe with a modified number of servings, in which case the ingredient amounts will be modified appropriately.
-
-8. **User Input Validation**  
-   - Validate all user inputs to prevent errors (e.g., empty fields, invalid characters).
-
-9.  **File and Directory Handling**  
-   - Store recipe data in a text file or JSON file.
-   - Use PHP functions to read from and write to the file.
-
-10. **Array Manipulation**  
-   - Use arrays to store and manipulate recipes temporarily in the script.
-
-11. **Global Variables and Scope**  
-    - Use PHP's autoglobals (e.g., `$_POST`, `$_GET`) for form and hyperlink handling.
-    - Ensure proper scope management in your functions.
+1. Draft your ERD and identify your primary resource and relationships
+2. Create your database and set up `config.php` for DB connection details
+3. Implement a `Database` class (PDO)
+4. Build Create/Read paths first; add Update/Delete once listing/detail pages work
+5. Add authentication (register/login/logout) and protect mutating routes
+6. Finish validation, CSRF, and error handling; polish UI and documentation

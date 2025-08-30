@@ -1,3 +1,5 @@
 modules:
-  - title: "Week 1: PHP and Object-Oriented Programming"
+  - title: "Week 1: Course Introduction & Dynamic Web Concepts"
     path: "class-1"
+  - title: "Week 2: Chapter 10 - Developing Object-Oriented PHP, Part 1"
+    path: "class-2"
