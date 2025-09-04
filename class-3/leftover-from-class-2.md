@@ -1,0 +1,23 @@
+---
+
+### Slide 12 – Magic Methods
+
+“PHP reserves method names beginning with a double underscore (`__`) for **magic methods**.  These special methods let you customize how objects behave in specific situations.  The constructor (`__construct`) and the cloning method (`__clone`) run when an object is created and cloned.  Magic methods like `__serialize` and `__unserialize` handle object serialization, while `__debugInfo` customizes debug output.  Property and method overloading methods (`__get`, `__set`, `__isset`, `__unset`, `__call`, `__callStatic`) allow you to intercept access to undefined or inaccessible members.  `__toString` lets an object be converted to a string, and `__invoke` makes an object callable like a function.  Except for the constructor, destructor and clone methods, magic methods must be declared **public**.  Use these methods sparingly and consistently to implement advanced behaviours such as proxies or dynamic properties.”
+
+---
+
+### Slide 13 – What’s New in PHP 8.3
+
+“PHP 8.3 introduces several improvements relevant to OOP.  **Typed class constants** now allow you to declare the expected type of a class constant, adding another layer of type safety.  **Dynamic constant fetch** lets you access class constants dynamically using variable names (e.g., `C::${'A'}`).  The new `#[Override]` attribute enforces that a method indeed overrides a parent method; if it doesn’t, PHP will throw an error, helping you avoid subtle bugs.  Finally, **deep cloning of readonly properties** ensures that when you clone an object with a readonly property containing another object, the inner object is also cloned rather than shared.  These features enhance type safety and developer confidence when writing object‑oriented code.”
+
+
+
+### constructor property promotion
+
+
+### Nullsafe methods and properties 
+
+### named arguments in methods
+
+### autoloaders
+
