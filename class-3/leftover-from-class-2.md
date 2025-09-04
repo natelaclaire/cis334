@@ -19,5 +19,7 @@
 
 ### named arguments in methods
 
+### namespaces
+
 ### autoloaders
 
