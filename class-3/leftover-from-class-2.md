@@ -8,12 +8,11 @@
 
 ### Slide 13 – What’s New in PHP 8.3
 
-“PHP 8.3 introduces several improvements relevant to OOP.  **Typed class constants** now allow you to declare the expected type of a class constant, adding another layer of type safety.  **Dynamic constant fetch** lets you access class constants dynamically using variable names (e.g., `C::${'A'}`).  The new `#[Override]` attribute enforces that a method indeed overrides a parent method; if it doesn’t, PHP will throw an error, helping you avoid subtle bugs.  Finally, **deep cloning of readonly properties** ensures that when you clone an object with a readonly property containing another object, the inner object is also cloned rather than shared.  These features enhance type safety and developer confidence when writing object‑oriented code.”
-
+**Dynamic constant fetch** lets you access class constants dynamically using variable names (e.g., `C::${'A'}`).  
+**deep cloning of readonly properties** ensures that when you clone an object with a readonly property containing another object, the inner object is also cloned rather than shared.
 
 
 ### constructor property promotion
-
 
 ### Nullsafe methods and properties 
 
