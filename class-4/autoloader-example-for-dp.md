@@ -1,19 +1,6 @@
 
 
-### Slide 13 – What’s New in PHP 8.3
 
-**Dynamic constant fetch** lets you access class constants dynamically using variable names (e.g., `C::${'A'}`).  
-
-
-### constructor property promotion
-
-### Nullsafe methods and properties 
-
-### named arguments in methods
-
-### namespaces
-
-### autoloaders
 
 I’ll drop in a minimal SPL autoloader that maps ClassName => /classes/ClassName.php, plus a tiny usage example.
 
