@@ -1,4 +1,6 @@
 
+Set up Composer autoloading
+Create ERD for social media site
 
 
 
