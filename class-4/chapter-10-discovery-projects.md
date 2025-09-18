@@ -108,7 +108,7 @@ abstract class FormField {
     public function __construct(
         protected string $label,
         protected string $name,
-        array $validationResult = [], // this isn't promoted to a property, just used in the constructor
+        array $validationResult = [], // this is not promoted to a property, just used in the constructor
         protected ?int $minLength = null,
         protected ?int $maxLength = null,
         protected ?string $placeholder = null,
@@ -125,7 +125,7 @@ abstract class FormField {
             $this->id = $this->name;
         }
 
-        // if there's a validation message for this field, set it
+        // if there is a validation message for this field, set it
         if (isset($validationResult[$name])) {
             $this->setValidationMessage($validationResult[$name]);            
         }
@@ -160,7 +160,7 @@ abstract class FormField {
     public function getLabel(): string {
         return $this->label;
     }
-    // Returns the array of CSS classes, adding 'is-invalid' if there's a validation message
+    // Returns the array of CSS classes, adding 'is-invalid' if there is a validation message
     public function getClasses(): array {
         if ($this->validationMessage) {
             if (!in_array('is-invalid', $this->classes)) {
