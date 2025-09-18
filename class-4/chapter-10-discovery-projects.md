@@ -6,15 +6,16 @@ nav_order: 1
 
 # 4.1 Chapter 10 Discovery Projects
 
-## Discovery Project 10=1
+## Discovery Project 10-1
 
 As you have probably guessed, we're going to be creating some classes this week. In fact, we're going to be converting our form-building and -handling functions to a set of classes that demonstrate the OOP concept of encapsulation by bringing all of the data and functionality for each field into an object - each field in our form will be an object, and the form itself will be an object that stores the fields in a property.
 
 Since we're already using Composer for our discovery projects, we'll update the `composer.json` file so that it knows where to find our classes and can autoload them as needed.
 
 1. Before you begin, create a new branch in your repository called `chapter-10`. To do that, press Ctrl-Shift-P to open the command palette, type "branch", and choose "Git: Create Branch..." when it appears. Then type `chapter-10` as the branch name when prompted and press Enter.
-2. In the root of your repository, create a new folder called `app`.
-3. Open the `composer.json` file that is in the root of your repo. It should currently contain a `require` section. You'll need to add a new section called `autoload` and the two sections need to be separated by a comma. The new section should appear exactly as shown in the sample below, which instructs Composer to autoload any classes in the `App` namespace from the `app/` folder, using PSR-4 to understand the folder structure. Don't worry about slight differences in the `require` section, such as different version numbers.
+2. In the root of your repository, create a new folder called `classes`.
+3. Inside that folder, create an empty file called `.gitkeep`.
+4. Open the `composer.json` file that is in the root of your repo. It should currently contain a `require` section. You'll need to add a new section called `autoload` and the two sections need to be separated by a comma. The new section should appear exactly as shown in the sample below, which instructs Composer to autoload any classes in the `App` namespace from the `app/` folder, using PSR-4 to understand the folder structure. Don't worry about slight differences in the `require` section, such as different version numbers.
 
 ```json
 {
@@ -25,25 +26,25 @@ Since we're already using Composer for our discovery projects, we'll update the 
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "classes/"
         }
     }
 }
 ```
 
-3. Next, open the Terminal tab at the bottom of the window (Ctrl-\` will open it) and enter the following to regenerate the autoload files based on your changes to `composer.json`:
+5. Next, open the Terminal tab at the bottom of the window (Ctrl-\` will open it) and enter the following to regenerate the autoload files based on your changes to `composer.json`:
 
 ```bash
 composer dump-autoload
 ```
 
-4. Remember to stage and commit your changes, adding "Discovery Project 10-1" as the commit message, then sync the changes.
+6. Remember to stage and commit your changes, adding "Discovery Project 10-1" as the commit message, then sync the changes.
 
-## Discovery Project 10=2
+## Discovery Project 10-2
 
 Next we'll replace our `htmlAttribute()` with a class called `HtmlAttribute`. This class will be in the `App\Forms` namespace.
 
-1. Inside the `app` folder create a new folder named `Forms`.
+1. Inside the `classes` folder create a new folder named `Forms`.
 2. Inside the `Forms` folder, create a file named `HtmlAttribute.php`.
 3. Inside the `HtmlAttribute.php` file, add the following:
 
@@ -64,13 +65,19 @@ class HtmlAttribute
     // outputs the attribute as a string, as just the name for binary attributes or a name="value" pair for others
     public function __toString(): string
     {
-        return $this->value === null ? $this->name : sprintf('%s="%s"', $this->name, htmlspecialchars($this->value));
+        return $this->value === null ? $this->name : sprintf('%s="%s"', $this->name, $this->value);
     }
 }
 ```
 
 4. Open the `includes/functions.php` file and remove the `htmlAttribute()` function.
-5. Look through the `includes/functions.php` file and replace all calls to the `htmlAttribute()` function with object instantiations of the `HtmlAttribute` class. They should stand out because VS Code should mark them as errors thanks to the PHP Intelephense extension. For example:
+5. At the top of the same file, add the following statement immediately below the existing `use` statement:
+
+```php
+use App\Forms\HtmlAttribute;
+```
+
+6. Look through the `includes/functions.php` file and replace all calls to the `htmlAttribute()` function with object instantiations of the `HtmlAttribute` class. They should stand out because VS Code should mark them as errors thanks to the PHP Intelephense extension. For example:
 
 ```php
 $htmlElement[] = htmlAttribute('for', $for);
@@ -78,14 +85,14 @@ $htmlElement[] = htmlAttribute('for', $for);
 $htmlElement[] = new HtmlAttribute('for', $for);
 ```
 
-6. Test your form and ensure that it still works.
-7. Remember to stage and commit your changes, adding "Discovery Project 10-2" as the commit message, then sync the changes.
+7. Test your form and ensure that it still works.
+8. Remember to stage and commit your changes, adding "Discovery Project 10-2" as the commit message, then sync the changes.
 
-## Discovery Project 10=3
+## Discovery Project 10-3
 
 We have a handful of functions that build different types of form fields. Each of them contains much of the same code, with minor differences for the different field types. This is a great example of where inheritance shines! In this project, we'll create an abstract superclass to provide the shared functionality and require that the subclasses provide specific methods.
 
-1. Inside the `app/Forms` folder, create a file named `FormField.php`.
+1. Inside the `classes/Forms` folder, create a file named `FormField.php`.
 2. Paste the following into the file:
 
 ```php
@@ -232,11 +239,11 @@ abstract class FormField {
 
 3. We don't have anything to test yet. Remember to stage and commit your changes, adding "Discovery Project 10-3" as the commit message, then sync the changes.
 
-## Discovery Project 10=4
+## Discovery Project 10-4
 
 Now that we have our `FormField` abstract class with the shared functionality and properties, it's time to extend it with concrete classes for each field type.
 
-1. Create a new file named `TextField.php` in the `app/Forms` folder and paste the following into it. Note that it doesn't provide a constructor because the superclass constructor covers all of the requirements.
+1. Create a new file named `TextField.php` in the `classes/Forms` folder and paste the following into it. Note that it doesn't provide a constructor because the superclass constructor covers all of the requirements.
 
 ```php
 <?php
@@ -270,7 +277,7 @@ class TextField extends FormField {
 }
 ```
 
-2. Create a new file named `TextareaField.php` in the `app/Forms` folder and paste the following into it:
+2. Create a new file named `TextareaField.php` in the `classes/Forms` folder and paste the following into it:
 
 ```php
 <?php
@@ -331,7 +338,7 @@ class TextareaField extends FormField {
 }
 ```
 
-3. Create a new file named `EmailField.php` in the `app/Forms` folder and paste the following into it:
+3. Create a new file named `EmailField.php` in the `classes/Forms` folder and paste the following into it:
 
 ```php
 <?php
@@ -371,11 +378,11 @@ class EmailField extends FormField {
 4. Using the above classes as a guide, if you have another function for creating an additional type of field of your choosing (you should), create a class that extends `FormField` and replaces that function. For example, if you have a `numberField()` function, you'll create a `NumberField` class.
 5. We're not quite ready to test yet. Remember to stage and commit your changes, adding "Discovery Project 10-4" as the commit message, then sync the changes.
 
-## Discovery Project 10=5
+## Discovery Project 10-5
 
 Now that we have our form field classes set up, it's time to put it all together with a class for managing our contact form.
 
-1. Create a new file named `ContactForm.php` in the `app/Forms` folder and paste the following into it. Note that it doesn't extend `FormField`.
+1. Create a new file named `ContactForm.php` in the `classes/Forms` folder and paste the following into it. Note that it doesn't extend `FormField`.
 
 ```php
 <?php
@@ -411,7 +418,8 @@ class ContactForm {
             if (isset($this->validationResult['sendingError'])) {
                 echo '<div class="alert alert-danger" role="alert">'.$this->validationResult['sendingError'].'</div>';
             } else {
-                echo '<div class="alert alert-danger" role="alert">Something is not right. Please check the message'.(count($this->validationResult)==1?'':'s').' below, make any necessary corrections, and try again. Thank you!</div>';
+                echo '<div class="alert alert-danger" role="alert">Something is not right. Please check the message'.
+                    (count($this->validationResult)==1?'':'s').' below, make any necessary corrections, and try again. Thank you!</div>';
             }
         }
 
@@ -504,7 +512,8 @@ class ContactForm {
             if ($sendStatus === true) {
                 echo '<div class="alert alert-success" role="alert">Thank you for reaching out! We&rsquo;ll be in touch within 48 hours.</div>';
             } else {
-                $form->validationResult['sendingError'] = "<p>There was a problem sending the message: {$sendStatus}</p><p>Please double-check what you entered and try again in a few seconds. We apologize for the inconvenience.</p>";
+                $form->validationResult['sendingError'] = "<p>There was a problem sending the message: {$sendStatus}</p><p>Please double-check "
+                    ."what you entered and try again in a few seconds. We apologize for the inconvenience.</p>";
                 $form->render();
             }
         } else {
