@@ -529,3 +529,4 @@ class ContactForm {
 ```
 
 3. We're ready to test! Try submitting the form again and see what happens. Once it is working, remember to stage and commit your changes, adding "Discovery Project 10-5" as the commit message, then sync the changes.
+4. Finally, please merge the `chapter-10` branch into the `main` branch. This way we can always go to the `main` branch for the present state of the discovery projects site and we can also refer to the individual chapter branches to see the state at the end of that set of projects.
