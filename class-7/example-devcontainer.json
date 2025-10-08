@@ -1,0 +1,63 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/php
+{
+	"name": "PHP & MariaDB",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/dotnet:latest": {},
+		"ghcr.io/warrenbuckley/codespace-features/smtp4dev:latest": {}
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {},
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+				"ikappas.composer",
+				"mrmlnc.vscode-apache",
+				"yy0931.vscode-sqlite3-editor"
+			]
+		}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [8080,5000,8181,3306],
+
+	// Use 'portsAttributes' to set default properties for specific forwarded ports. More info: https://code.visualstudio.com/docs/remote/devcontainerjson-reference.
+	"portsAttributes": {
+		"8080": {
+			"label": "Remote Web port",
+			"onAutoForward": "notify"
+		},
+		"8181": {
+			"label": "phpMyAdmin port",
+			"onAutoForward": "notify"
+		},
+		"5000": {
+			"label": "SMTP4Dev port",
+			"onAutoForward": "notify"
+		},
+		"25": {
+			"label": "SMTP",
+			"onAutoForward": "silent"
+		},
+		"143": {
+			"label": "IMAP",
+			"onAutoForward": "silent"
+		}
+	},
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "sudo a2enmod rewrite && sudo chmod a+x \"$(pwd)\" && sudo chmod a+x \"$(pwd)/dump-mysql.sh\" && sudo chmod a+x \"$(pwd)/load-mysql.sh\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)/public\" /var/www/html; if [ -f composer.json ];then composer install;fi; sudo sed -i 's/Listen 80$//' /etc/apache2/ports.conf; sudo sed -i 's/<VirtualHost \\*:80>/ServerName 127.0.0.1\\n<VirtualHost \\*:8080>/' /etc/apache2/sites-enabled/000-default.conf;"
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

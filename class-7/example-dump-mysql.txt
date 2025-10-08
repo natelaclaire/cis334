@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+mysqldump -hdb -uroot -p"mariadb" --databases mydb > $CODESPACE_VSCODE_FOLDER/sql/mydb.sql

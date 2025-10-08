@@ -8,6 +8,86 @@ nav_order: 1
 
 ## Discovery Project 7-1
 
+### Goal
+
+This week we need to prepare your discovery projects repository to support MariaDB and phpMyAdmin. To do that, you'll add some files to the `.devcontainer` folder in your existing repository.
+
+### Steps
+
+1. Open your discovery projects Codespace and expand the `.devcontainer` folder.
+2. Inside the folder, you should see one file named `devcontainer.json`. Open it.
+3. Replace the contents of `devcontainer.json` with the contents of [this file](http://natelaclaire.me/cis334/class-7/example-devcontainer.json). Note that this file refers to a `docker-compose.yml` file, which we'll create next.
+4. Inside the same folder, create a new file named `docker-compose.yml`.
+5. Place the contents of [this file](http://natelaclaire.me/cis334/class-7/example-docker-compose.yml) into the new file. This file refers to a file named `Dockerfile`, so now we need to create that.
+6. Create another new file inside the same folder, this one called `Dockerfile` (no extension).
+7. Place the contents of [this file](http://natelaclaire.me/cis334/class-7/example-Dockerfile.txt) into the new file.
+8. Next, we need to set up our shell scripts for dumping and loading the databases. Create a new file in the root of your repository called `dump-mysql.sh` and place the contents of [this file](http://natelaclaire.me/cis334/class-7/example-dump-mysql.txt) inside.
+9. Create a new file in the root of your repository called `load-mysql.sh` and place the contents of [this file](http://natelaclaire.me/cis334/class-7/example-load-mysql.txt) inside.
+10. Make the two shell scripts executable by typing the following into the Terminal and pressing Enter after each line:
+
+```sh
+sudo chmod a+x ./dump-mysql.sh
+sudo chmod a+x ./load-mysql.sh
+```
+
+11. Save, stage, commit, and sync your changes. Use a commit message such as "Discovery Project 7-1".
+12. Perform a Full Rebuild of the Codespace container, which will cause the database and phpMyAdmin images to be added and loaded.
+
+## Discovery Project 7-2
+
+### Goal
+
+In this project, we'll create a new database and modify our shell scripts in order to backup and restore the new database.
+
+### Create the Database
+
+1. On the Ports tab, click the button to open port 8181 in the browser.
+2. Sign in with the `root` username and `mariadb` password.
+3. Click the Databases tab.
+4. In the **Create Database** box, enter `crm` as the database name.
+5. Choose `utf8mb4_unicode_ci` from the drop-down to indicate the collation.
+6. Click Create.
+7. Click User Accounts.
+8. Click Add User Account.
+9. Specify `crm` as the username, `localhost` as the host name, and use the button to generate a random password.
+10. Make note of the password.
+11. Leave all other fields as-is.
+12. Click Go.
+13. When the confirmation that you have added a new user appears, copy the SQL code shown and store it somewhere, adding the password that you selected in place of the asterisks.
+14. Click the Database button right before Change Password.
+15. Select the `crm` database and click Go.
+16. Click Check All and click Go.
+17. Copy the SQL code that appears and store it with the other SQL code.
+
+### Create a SQL Script
+
+We'll need our `load-mysql.sh` script to recreate the user permissions, so let's set up a SQL script to do that.
+
+1. Create a new file in the `sql` folder called `crm-user.sql`.
+2. Paste the two SQL statements from above into the file and save it.
+3. Add `IF NOT EXISTS` after `CREATE USER` to avoid any error messages if the user account already exists.
+
+### Modify the Shell Scripts
+
+Now we'll update our shell scripts to backup and restore the new database and also recreate the new user account and permissions.
+
+1. Open `dump-mysql.sh` in VS Code.
+2. Copy the second line (which begins with `mysqldump`) and paste a copy on the next line.
+3. Modify the new line, replacing `mydb` with `crm` in both places.
+4. Save the file.
+5. Open `load-mysql.sh`.
+6. Copy the second line (which begins with `mysql`) and paste two copies on the next two lines.
+7. On the first of the new lines, change `mydb.sql` to `crm-user.sql`.
+8. On the second of the new lines, change `mydb.sql` to `crm.sql`.
+9. Save the file.
+10. In the Terminal, type `./dump-mysql.sh` and press Enter.
+11. Check to ensure that a new `crm.sql` file was created in the `sql` folder.
+12. In the Terminal, type `./load-mysql.sh` and press Enter.
+13. The only error that you should see will be that the user can't be created, which is because it already exists.
+14. Save, stage, commit, and sync your changes. Use a commit message such as "Discovery Project 7-1".
+
+## Discovery Project 7-3
+
 In our remaining discovery projects, we'll be building a small social network and customer relationship management (CRM) system into our discovery projects Web site.
 
 ### Goal
@@ -22,7 +102,7 @@ We’re **not** adding foreign key constraints yet, but we’ll include the colu
 
 ### Before you start (one-time prefs)
 
-1. Log into phpMyAdmin → left sidebar: click **mydb** to select the database.
+1. Log into phpMyAdmin → left sidebar: click **crm** to select the database.
 2. Top bar → **Operations** → set **Collation** to `utf8mb4_general_ci` (or `utf8mb4_unicode_ci`) and default **Storage Engine** to `InnoDB`. Save.
 
 ### Table 1: `companies`
@@ -39,7 +119,7 @@ We’re **not** adding foreign key constraints yet, but we’ll include the colu
 
 **phpMyAdmin steps**
 
-1. With **mydb** selected → **SQL** or **Structure → Create table** → name: `companies`.
+1. With **crm** selected → **SQL** or **Structure → Create table** → name: `companies`.
 2. Add the columns above.
 3. Set `id` as **A_I** (Auto Increment) and **Primary** (index dropdown).
 4. For `created_at`/`updated_at`, set the default and “on update” as noted.
@@ -119,13 +199,13 @@ We’ll enforce these relationships with **foreign key constraints** in a later 
 
 ### Export, Stage, Commit, and Sync
 
-Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-1", and sync the commits.
+Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-3", and sync the commits.
 
-## Discovery Project 7-2
+## Discovery Project 7-4
 
 ### Goal
 
-In **phpMyAdmin**, we'll create three more tables in database **`mydb`**:
+In **phpMyAdmin**, we'll create three more tables in database **`crm`**:
 
 * `users`
 * `profiles`
@@ -135,7 +215,7 @@ We’re still **not** adding foreign key constraints yet, but we’ll include co
 
 ### Before you start (one-time prefs)
 
-1. Log into phpMyAdmin → left sidebar: click **mydb** to select the database.
+1. Log into phpMyAdmin → left sidebar: click **crm** to select the database.
 2. Top bar → **Operations** → confirm **Collation** is `utf8mb4_general_ci` (or `utf8mb4_unicode_ci`) and **Storage Engine** is `InnoDB`. Save.
 
 ### Table 1: `users`
@@ -158,7 +238,7 @@ We’re still **not** adding foreign key constraints yet, but we’ll include co
 
 **phpMyAdmin steps**
 
-1. With **mydb** selected → **Structure → Create table** → name: `users`.
+1. With **crm** selected → **Structure → Create table** → name: `users`.
 2. Add the columns above. Mark `id` as **A_I** and **Primary**.
 3. In **Indexes**, set **UNIQUE** on `email`.
 4. Save.
@@ -228,13 +308,13 @@ We’ll wire up **foreign keys** (and cascade rules) next, once all participatin
 
 ### Export, Stage, Commit, and Sync
 
-Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-2", and sync the commits.
+Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-4", and sync the commits.
 
-## Discovery Project 7-3
+## Discovery Project 7-5
 
 ### Goal
 
-In **phpMyAdmin**, we'll create our remaining five tables in database **`mydb`**:
+In **phpMyAdmin**, we'll create our remaining five tables in database **`crm`**:
 
 * `activities`
 * `posts`
@@ -246,7 +326,7 @@ We’re still **not** adding foreign key constraints yet. We’ll include the co
 
 ### Before you start (one-time prefs)
 
-1. Log into phpMyAdmin → left sidebar: click **mydb**.
+1. Log into phpMyAdmin → left sidebar: click **crm**.
 2. Top bar → **Operations** → confirm **Collation** `utf8mb4_general_ci` (or `utf8mb4_unicode_ci`) and **Storage Engine** `InnoDB`. Save.
 
 ### Table 1: `activities`
@@ -401,19 +481,19 @@ We’ll add the actual **foreign key constraints** (and cascade rules) after all
 
 ### Export, Stage, Commit, and Sync
 
-Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-3", and sync the commits.
+Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-5", and sync the commits.
 
-## Discovery Project 7-4
+## Discovery Project 7-6
 
 ### Goal
 
-In **phpMyAdmin**, add **foreign key constraints** in database **`mydb`** to connect the tables you created in 7-1, 7-2, and 7-3.
+In **phpMyAdmin**, add **foreign key constraints** in database **`crm`** to connect the tables you created in 7-1, 7-2, and 7-3.
 
 We’ll set sensible **ON DELETE/ON UPDATE** rules to preserve data integrity and match the use-cases we’ve outlined.
 
 ### Before you start (one-time checks)
 
-1. **Select DB:** Log into phpMyAdmin → left sidebar → click **mydb**.
+1. **Select DB:** Log into phpMyAdmin → left sidebar → click **crm**.
 2. **Storage engine:** Confirm all tables use **InnoDB** (Structure tab shows “InnoDB”). If any table is MyISAM, use **Operations → Storage Engine → InnoDB → Go**.
 3. **Column types must match:** FK columns and referenced PK columns must be the same type/unsigned/length (e.g., `INT UNSIGNED` → `INT UNSIGNED`).
 4. **Indexes:** phpMyAdmin will create needed indexes automatically when you add a FK, but it’s fine if you already added them.
@@ -427,7 +507,7 @@ For each relationship below, repeat this flow:
 3. In the **Foreign key constraints** section:
 
    * **Column:** choose the FK column (e.g., `company_id`).
-   * **Referenced database:** `mydb`.
+   * **Referenced database:** `crm`.
    * **Referenced table:** choose the parent table (e.g., `companies`).
    * **Referenced column:** usually `id`.
    * **On delete:** set as listed below.
@@ -572,15 +652,15 @@ Once these are in place, your schema has enforceable integrity that matches the 
 
 ### Export, Stage, Commit, and Sync
 
-Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-4", and sync the commits.
+Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-6", and sync the commits.
 
-## Discovery Project 7-5
+## Discovery Project 7-7
 
 This one is all about adding the **remaining constraints** (primarily `CHECK` constraints) so MySQL enforces more of your business rules. Because phpMyAdmin doesn’t have a GUI for `CHECK`, we'll just copy and paste the provided SQL.
 
 ### Goal
 
-In **phpMyAdmin → mydb → SQL**, run the statements below to add constraints that ensure:
+In **phpMyAdmin → crm → SQL**, run the statements below to add constraints that ensure:
 
 * Names/titles aren’t empty strings
 * Emails are lowercase and (lightly) validated
@@ -595,7 +675,7 @@ In **phpMyAdmin → mydb → SQL**, run the statements below to add constraints 
 
 ### Step 1 — Run these SQL statements
 
-> In phpMyAdmin: select **mydb** → **SQL** → paste everything below → **Go**.
+> In phpMyAdmin: select **crm** → **SQL** → paste everything below → **Go**.
 
 ```sql
 /* ---------------------------
@@ -716,4 +796,4 @@ ALTER TABLE reactions
 
 ### Export, Stage, Commit, and Sync
 
-Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-5", and sync the commits.
+Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-7", and sync the commits.

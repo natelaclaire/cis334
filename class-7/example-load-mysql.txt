@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+mysql -hdb -uroot -p"mariadb" < $CODESPACE_VSCODE_FOLDER/sql/mydb.sql
