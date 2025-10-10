@@ -150,7 +150,14 @@ We’ll enforce these relationships with **foreign key constraints** in a later 
 
 ### Export, Stage, Commit, and Sync
 
-Remember to run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-2", and sync the commits.
+We need to fix a permissions issue before we can export the database. In the Terminal, run:
+
+```sh
+sudo chown vscode ./sql
+sudo chmod 777 ./sql
+```
+
+Then run `./dump-mysql.sh`, stage and commit the changes with a sensible commit message such as "Discovery Project 7-2", and sync the commits.
 
 ## Discovery Project 7-3
 
