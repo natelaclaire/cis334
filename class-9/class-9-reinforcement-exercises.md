@@ -1,0 +1,1 @@
+* Exercises: convert an existing MySQL-only script to PDO and run it against SQLite.
