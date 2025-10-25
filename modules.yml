@@ -1,5 +1,7 @@
 modules:
   - title: "Week 1: Course Introduction & Dynamic Web Concepts"
     path: "class-1"
+    thumbnail: "images/class-1.jpg"
   - title: "Week 2: Chapter 10 - Developing Object-Oriented PHP, Part 1"
     path: "class-2"
+    thumbnail: "images/class-2.jpg"
