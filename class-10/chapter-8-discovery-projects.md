@@ -52,14 +52,14 @@ final class Database
 }
 ```
 
-3. Quick [smoke test](https://en.wikipedia.org/wiki/Smoke_testing_(software)): create `public/pdo-test.php` to `require 'vendor/autoload.php';` and call `App\Database::get();`.
+3. Quick [smoke test](https://en.wikipedia.org/wiki/Smoke_testing_(software)): create `public/pdo-test.php` to `require __DIR__.'/../vendor/autoload.php';` and call `App\Database::get();`.
 4. Assuming you don't see any errors, commit your changes with a message like "Discovery Project 8-1", push to your repository, and then you're ready to move on to create your model classes.
 
-## Discovery Project 8-2 — Company and Project models (CRUD + fetch)
+## Discovery Project 8-2 — Company, Contact, and Project models (CRUD + fetch)
 
 ### Goal
 
-Model `companies` and `projects` with camelCase properties, static fetchers, and instance `insert()`, `update()`, `delete()` methods. Use `fetchObject()` or `FETCH_CLASS` when selecting.
+Model `companies`, `contacts`, and `projects` with camelCase properties, static fetchers, and instance `insert()`, `update()`, `delete()` methods. Use `fetchObject()` or `FETCH_CLASS` when selecting.
 
 ### Files
 
@@ -370,7 +370,7 @@ $proj->slug = 'acme-website-redesign';
 $proj->title = 'Website Redesign';
 $proj->summaryMd = 'Update brand + CMS.';
 $proj->status = 'active';
-$proj->visibility = 'project';
+$proj->visibility = 'public';
 $proj->insert();
 echo "Project #{$proj->id} created\n";
 
@@ -630,7 +630,7 @@ final class UserWithProfile
 On your own, add a method to the `Contact` class to create a `User` from a `Contact`. It should:
 
 - Create a new `User` instance.
-- Set the `User`'s `email` from the `Contact`'s `email`.
+- Set the `User`'s `email` from the `Contact`'s `email` (remember, you can use the `$this` keyword to refer to the current object).
 - Accept the hashed password as a parameter.
 - Set the `User`'s `displayName` from the `Contact`'s full name.
 - Set the `User`'s `role` to `'client'` and `active` to `1`.
@@ -644,7 +644,7 @@ On your own, add a method to the `Contact` class to create a `User` from a `Cont
 2. Run the demo script in your Codespace terminal with `php demo-crud.php`. Note that `email` must be unique in the `users` table, so you may need to adjust the email address used in your test code if you run it multiple times.
 3. If everything works as expected, commit your changes with a message like "Discovery Project 8-3" and push to your repository.
 
-## Discovery Project 8-4 — Posts and comments (fetch and write)
+## Discovery Project 8-4 — Posts, comments, activities, and follows (fetch and write)
 
 ### Goal
 
@@ -861,6 +861,8 @@ Create models for `project_members` and `reactions` with static fetchers and ins
    - Static method `membersOf(int $projectId): array` to fetch all members of a project.
    - Instance method `insert(): void` to add a member to a project.
    - Instance method `delete(): void` to remove a member from a project.
+   - Instance method `changeRole(string $newRole): void` to update a member's role (remember to update `$this->role`, too!).
+   - Instance method `getUser(): ?User` to fetch the associated `User` object.
    - Use prepared statements and `PDO::FETCH_CLASS` for fetching.
    - Alias columns in SQL to match property names.
 3. Implement the following for `Reaction`:
