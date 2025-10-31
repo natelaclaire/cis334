@@ -11,7 +11,8 @@ In chapter 7 you modeled the database tables (companies, contacts, projects, use
 Notes:
 
 - We'll use one shared PDO connection via a small `Database` class.
-- We'll use camelCase properties in PHP; alias snake_case columns in SQL as needed.
+- We'll use camelCase properties in PHP and alias snake_case columns in SQL as needed.
+- We could use [strict typing](https://inspector.dev/why-use-declarestrict_types1-in-php-fast-tips/) for these files, but since we haven't for the earlier discovery projects, we'll keep things consistent. I encourage you to read about strict types and consider enforcing the feature in your own projects, though.
 
 ## Discovery Project 8-1 — Shared PDO connection and folder setup
 
@@ -22,12 +23,10 @@ Create a single shared PDO connection that all models will reuse.
 ### Steps
 
 1. In your discovery projects repo, create `classes/Database.php`.
-2. Add the following (MySQL/MariaDB DSN shown; swap for SQLite if desired):
+2. Add the following code:
 
 ```php
 <?php
-declare(strict_types=1);
-
 namespace App;
 
 use PDO;
@@ -53,8 +52,8 @@ final class Database
 }
 ```
 
-3. If your `composer.json` already autoloads `App\` from `classes/`, run `composer dump-autoload`.
-4. Quick smoke test: create `public/pdo-test.php` to `require 'vendor/autoload.php';` and call `App\Database::get();`.
+3. Quick [smoke test](https://en.wikipedia.org/wiki/Smoke_testing_(software)): create `public/pdo-test.php` to `require 'vendor/autoload.php';` and call `App\Database::get();`.
+4. Assuming you don't see any errors, commit your changes with a message like "Discovery Project 8-1", push to your repository, and then you're ready to move on to create your model classes.
 
 ## Discovery Project 8-2 — Company and Project models (CRUD + fetch)
 
@@ -64,12 +63,18 @@ Model `companies` and `projects` with camelCase properties, static fetchers, and
 
 ### Files
 
-Create `classes/Models/Company.php` and `classes/Models/Project.php`.
+Create `classes/Models/Company.php`, `classes/Models/Contact.php`, and `classes/Models/Project.php`.
+
+Notes:
+
+- ID isn't nullable in the database, but we make it nullable in the class to represent new instances that haven't been inserted yet.
+- For the `delete()` and `update()` methods, we check if `id` is `null` before attempting to proceed, to avoid errors.
+- For brevity, we won't include all possible fetchers (e.g., by industry, by status); just the basics to get you started.
+- In a real project, you might want to add error handling, logging, or validation, but we'll keep things simple, at least for now.
+- In a real project, I would use detailed [PHPDoc](https://phpdoc.org/) comments to help IDEs and developers understand return types, parameters, etc., but for brevity, I've only included a few basic examples for the static methods that return arrays of objects. Note that PHP doesn't natively support [typed arrays](https://backendtea.com/post/php-typed-arrays/) yet, so the PHPDoc comments help clarify what type of objects will be in the returned arrays (see [this article for more about the ways you can denote an array of objects in PHPDoc](https://www.uptimia.com/questions/how-to-type-hint-an-array-of-objects-in-phpdoc)).
 
 ```php
 <?php
-declare(strict_types=1);
-
 namespace App\Models;
 
 use App\Database;
@@ -153,8 +158,91 @@ final class Company
 
 ```php
 <?php
-declare(strict_types=1);
+namespace App\Models;
 
+use App\Database;
+use PDO;
+
+final class Contact
+{
+    public ?int $id = null;
+    public int $companyId;
+    public ?int $userId = null;
+    public string $firstName;
+    public ?string $lastName = null;
+    public ?string $email = null;
+    public ?string $phone = null;
+    public ?string $title = null;
+    public ?string $notesMd = null;
+    public string $createdAt;
+    public string $updatedAt;
+
+    /** @return Contact[] */
+    public static function forCompany(int $companyId): array
+    {
+        $sql = 'SELECT id, company_id AS companyId, user_id AS userId, first_name AS firstName, last_name AS lastName, email, phone, title, notes_md AS notesMd, created_at AS createdAt, updated_at AS updatedAt
+                FROM contacts WHERE company_id = :cid ORDER BY first_name, last_name';
+        $st = Database::get()->prepare($sql);
+        $st->execute([':cid' => $companyId]);
+        return $st->fetchAll(PDO::FETCH_CLASS, self::class);
+    }
+
+    public static function find(int $id): ?self
+    {
+        $st = Database::get()->prepare('SELECT id, company_id AS companyId, user_id AS userId, first_name AS firstName, last_name AS lastName, email, phone, title, notes_md AS notesMd, created_at AS createdAt, updated_at AS updatedAt FROM contacts WHERE id = :id');
+        $st->execute([':id' => $id]);
+        return $st->fetchObject(self::class) ?: null;
+    }
+
+    public function insert(): void
+    {
+        $sql = 'INSERT INTO contacts (company_id, user_id, first_name, last_name, email, phone, title, notes_md)
+                VALUES (:company_id, :user_id, :first_name, :last_name, :email, :phone, :title, :notes_md)';
+        $st = Database::get()->prepare($sql);
+        $st->execute([
+            ':company_id' => $this->companyId,
+            ':user_id'    => $this->userId,
+            ':first_name' => $this->firstName,
+            ':last_name'  => $this->lastName,
+            ':email'      => $this->email,
+            ':phone'      => $this->phone,
+            ':title'      => $this->title,
+            ':notes_md'   => $this->notesMd,
+        ]);
+        $this->id = (int)Database::get()->lastInsertId();
+    }
+
+    public function update(): void
+    {
+        if ($this->id === null) {
+            throw new \LogicException('Cannot update without id');
+        }
+        $sql = 'UPDATE contacts SET user_id = :user_id, first_name = :first_name, last_name = :last_name, email = :email, phone = :phone, title = :title, notes_md = :notes_md WHERE id = :id';
+        $st = Database::get()->prepare($sql);
+        $st->execute([
+            ':user_id'    => $this->userId,
+            ':first_name' => $this->firstName,
+            ':last_name'  => $this->lastName,
+            ':email'      => $this->email,
+            ':phone'      => $this->phone,
+            ':title'      => $this->title,
+            ':notes_md'   => $this->notesMd,
+            ':id'         => $this->id,
+        ]);
+    }
+
+    public function delete(): void
+    {
+        if ($this->id !== null) {
+            $st = Database::get()->prepare('DELETE FROM contacts WHERE id = :id');
+            $st->execute([':id' => $this->id]);
+        }
+    }
+}
+```
+
+```php
+<?php
 namespace App\Models;
 
 use App\Database;
@@ -164,7 +252,7 @@ final class Project
 {
     public ?int $id = null;
     public int $companyId;
-    public string $slug;
+    public ?string $slug; // will be auto-generated if null on insert
     public string $title;
     public ?string $summaryMd = null;
     public string $status;     // 'active' | 'paused' | 'archived'
@@ -193,6 +281,11 @@ final class Project
 
     public function insert(): void
     {
+        // Ensure slug is set
+        if ($this->slug === null) {
+            $this->generateSlug();
+        }
+
         $sql = 'INSERT INTO projects (company_id, slug, title, summary_md, status, visibility)
                 VALUES (:company_id, :slug, :title, :summary_md, :status, :visibility)';
         $st = Database::get()->prepare($sql);
@@ -231,8 +324,103 @@ final class Project
         $st = Database::get()->prepare('DELETE FROM projects WHERE id = :id');
         $st->execute([':id' => $this->id]);
     }
+
+    /** Generate a unique slug based on the title */
+    public function generateSlug(): void
+    {
+        $baseSlug = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($this->title)));
+        $slug = $baseSlug;
+        $i = 1;
+        while (self::findBySlug($slug) !== null) {
+            $slug = $baseSlug . '-' . $i++;
+        }
+        $this->slug = $slug;
+    }
 }
 ```
+
+### Add getFullName() to Contact
+
+On your own, add a method to the `Contact` class called `getFullName()` that returns the contact's full name by combining `firstName` and `lastName`. If `lastName` is `null`, it should return just the `firstName`.
+
+### Test, Commit, and Push
+
+1. Create `demo-crud.php` at your project root and paste the following into it.
+
+```php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Models\Company;
+use App\Models\Project;
+use App\Models\Contact;
+
+echo "== INSERT ==\n";
+$acme = new Company();
+$acme->name = 'Acme, Inc.';
+$acme->websiteUrl = 'https://acme.example';
+$acme->industry = 'Manufacturing';
+$acme->notesMd = 'Top client.';
+$acme->insert();
+echo "Company #{$acme->id} created\n";
+
+$proj = new Project();
+$proj->companyId = (int)$acme->id;
+$proj->slug = 'acme-website-redesign';
+$proj->title = 'Website Redesign';
+$proj->summaryMd = 'Update brand + CMS.';
+$proj->status = 'active';
+$proj->visibility = 'project';
+$proj->insert();
+echo "Project #{$proj->id} created\n";
+
+$contact = new Contact();
+$contact->companyId = (int)$acme->id;
+//$contact->userId = (int)$user->id; // optional owner
+$contact->firstName = 'Alice';
+$contact->lastName = 'Anderson';
+$contact->email = 'alice@example.com';
+$contact->title = 'Marketing Manager';
+$contact->insert();
+echo "Contact #{$contact->id} created\n";
+
+echo "\n== SELECT ==\n";
+// Companies list
+foreach (Company::all() as $c) {
+    echo "- Company: {$c->name}\n";
+}
+
+// Find by slug
+$fetched = Project::findBySlug('acme-website-redesign');
+echo $fetched ? "Found project: {$fetched->title}\n" : "Project not found\n";
+
+// Contacts for company
+foreach (Contact::forCompany((int)$acme->id) as $ct) {
+    echo "Contact: {$ct->getFullName()} <{$ct->email}>\n";
+}
+
+echo "\n== UPDATE ==\n";
+$acme->industry = 'Aerospace';
+$acme->update();
+echo "Company #{$acme->id} industry updated\n";
+
+$proj->status = 'paused';
+$proj->update();
+echo "Project #{$proj->id} status updated\n";
+
+echo "\n== DELETE ==\n";
+$contact->delete();
+echo "Contact #{$contact->id} deleted\n";
+
+$proj->delete();
+echo "Project #{$proj->id} deleted\n";
+
+$acme->delete();
+echo "Company #{$acme->id} deleted\n";
+```
+
+2. Run the demo script in your Codespace terminal with `php demo-crud.php`.
+3. If everything works as expected, commit your changes with a message like "Discovery Project 8-2" and push to your repository.
 
 ## Discovery Project 8-3 — User and Profile models (fetch joins, 1:1)
 
@@ -246,8 +434,6 @@ Create `classes/Models/User.php` and `classes/Models/Profile.php`.
 
 ```php
 <?php
-declare(strict_types=1);
-
 namespace App\Models;
 
 use App\Database;
@@ -277,7 +463,7 @@ final class User
     /** @return User[] */
     public static function allActive(): array
     {
-        $st = Database::get()->query('SELECT id, email, password_hash AS passwordHash, display_name AS displayName, role, active, created_at AS createdAt, updated_at AS updatedAt, deleted_at AS deletedAt FROM users WHERE active = 1 ORDER BY display_name');
+        $st = Database::get()->query('SELECT id, email, password_hash AS passwordHash, display_name AS displayName, role, active, created_at AS createdAt, updated_at AS updatedAt, deleted_at AS deletedAt FROM users WHERE active = 1 AND deleted_at IS NULL ORDER BY display_name');
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
     }
 
@@ -317,16 +503,43 @@ final class User
         if ($this->id === null) {
             return;
         }
-        $st = Database::get()->prepare('DELETE FROM users WHERE id = :id');
+        $st = Database::get()->prepare('UPDATE users SET deleted_at = NOW() WHERE id = :id');
         $st->execute([':id' => $this->id]);
+    }
+
+    public function restore(): void
+    {
+        if ($this->id === null) {
+            return;
+        }
+        $st = Database::get()->prepare('UPDATE users SET deleted_at = NULL WHERE id = :id');
+        $st->execute([':id' => $this->id]);
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deletedAt !== null;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active === 1 && !$this->isDeleted();
+    }
+
+    public function getProfile(): ?Profile
+    {
+        return Profile::findByUserId($this->id);
     }
 }
 ```
 
 ```php
 <?php
-declare(strict_types=1);
-
 namespace App\Models;
 
 use App\Database;
@@ -340,18 +553,27 @@ final class Profile
     public ?string $location = null;
     public ?string $avatarUrl = null;
 
-    public static function findByUserId(int $userId): ?self
+    public static function findByUserId(int $userId): self
     {
         $sql = 'SELECT user_id AS userId, bio_md AS bioMd, website_url AS websiteUrl, location, avatar_url AS avatarUrl
                 FROM profiles WHERE user_id = :uid';
         $st = Database::get()->prepare($sql);
         $st->execute([':uid' => $userId]);
-        return $st->fetchObject(self::class) ?: null;
+        $profile = $st->fetchObject(self::class);
+
+        // If no profile exists, return an instance with just userId set, ready for upsert
+        if (!$profile) {
+            $profile = new self();
+            $profile->userId = $userId;
+        }
+
+        return $profile;
     }
 
     public function upsert(): void
     {
         // Simple upsert: try update; if 0 rows, insert
+        // In MySQL 8+, we could use INSERT ... ON DUPLICATE KEY UPDATE instead, but that isn't supported in all database platforms.
         $update = Database::get()->prepare('UPDATE profiles SET bio_md = :bio_md, website_url = :website_url, location = :location, avatar_url = :avatar_url WHERE user_id = :user_id');
         $update->execute([
             ':bio_md'     => $this->bioMd,
@@ -378,8 +600,6 @@ Example: hydrate a combined view of user+profile (aliases → a dedicated view c
 
 ```php
 <?php
-declare(strict_types=1);
-
 namespace App\Views;
 
 use App\Database;
@@ -397,6 +617,7 @@ final class UserWithProfile
     {
         $sql = 'SELECT u.id, u.display_name AS displayName, p.bio_md AS bioMd, p.website_url AS websiteUrl
                 FROM users u LEFT JOIN profiles p ON p.user_id = u.id
+                WHERE u.active = 1 AND u.deleted_at IS NULL
                 ORDER BY u.display_name';
         $st = Database::get()->query($sql);
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
@@ -404,20 +625,37 @@ final class UserWithProfile
 }
 ```
 
+### Create User From Contact Example
+
+On your own, add a method to the `Contact` class to create a `User` from a `Contact`. It should:
+
+- Create a new `User` instance.
+- Set the `User`'s `email` from the `Contact`'s `email`.
+- Accept the hashed password as a parameter.
+- Set the `User`'s `displayName` from the `Contact`'s full name.
+- Set the `User`'s `role` to `'client'` and `active` to `1`.
+- Insert the `User` into the database.
+- Associate the created `User`'s `id` with the `Contact`'s `userId` property and update the `Contact`.
+- Return the created `User` instance.
+
+### Test, Commit, and Push
+
+1. Open `demo-crud.php` and add code to test the new `User` and `Profile` classes, as well as the new method on `Contact`. For example, you might create a new `User`, update their `Profile`, and fetch the combined view.
+2. Run the demo script in your Codespace terminal with `php demo-crud.php`. Note that `email` must be unique in the `users` table, so you may need to adjust the email address used in your test code if you run it multiple times.
+3. If everything works as expected, commit your changes with a message like "Discovery Project 8-3" and push to your repository.
+
 ## Discovery Project 8-4 — Posts and comments (fetch and write)
 
 ### Goal
 
-Model `posts` and `comments` with static fetchers and instance `insert()/update()/delete()`.
+Model `posts`, `comments`, `activities`, and `follows` with static fetchers and instance `insert()/update()/delete()`.
 
 ### Files
 
-Create `classes/Models/Post.php` and `classes/Models/Comment.php`.
+Create `classes/Models/Post.php`, `classes/Models/Comment.php`, `classes/Models/Activity.php`, and `classes/Models/Follow.php`.
 
 ```php
 <?php
-declare(strict_types=1);
-
 namespace App\Models;
 
 use App\Database;
@@ -480,8 +718,72 @@ final class Post
 
 ```php
 <?php
-declare(strict_types=1);
+namespace App\Models;
 
+use App\Database;
+use PDO;
+
+final class Activity
+{
+    public ?int $id = null;
+    public int $contactId;
+    public ?int $userId = null;
+    public string $type;       // 'call'|'email'|'meeting'|'task'
+    public string $subject;
+    public ?string $dueAt = null;
+    public ?string $completedAt = null;
+    public ?string $notesMd = null;
+    public string $createdAt;
+
+    /** @return Activity[] */
+    public static function forContact(int $contactId): array
+    {
+        $sql = 'SELECT id, contact_id AS contactId, user_id AS userId, type, subject, due_at AS dueAt, completed_at AS completedAt, notes_md AS notesMd, created_at AS createdAt
+                FROM activities WHERE contact_id = :cid ORDER BY created_at DESC';
+        $st = Database::get()->prepare($sql);
+        $st->execute([':cid' => $contactId]);
+        return $st->fetchAll(PDO::FETCH_CLASS, self::class);
+    }
+
+    public function insert(): void
+    {
+        $sql = 'INSERT INTO activities (contact_id, user_id, type, subject, due_at, completed_at, notes_md)
+                VALUES (:contact_id, :user_id, :type, :subject, :due_at, :completed_at, :notes_md)';
+        $st = Database::get()->prepare($sql);
+        $st->execute([
+            ':contact_id'   => $this->contactId,
+            ':user_id'      => $this->userId,
+            ':type'         => $this->type,
+            ':subject'      => $this->subject,
+            ':due_at'       => $this->dueAt,
+            ':completed_at' => $this->completedAt,
+            ':notes_md'     => $this->notesMd,
+        ]);
+        $this->id = (int)Database::get()->lastInsertId();
+    }
+
+    public function markCompleted(string $completedAt = null): void
+    {
+        if ($this->id === null) {
+            throw new \LogicException('Cannot update without id');
+        }
+        $this->completedAt = $completedAt ?? date('Y-m-d H:i:s');
+        $st = Database::get()->prepare('UPDATE activities SET completed_at = :completed_at WHERE id = :id');
+        $st->execute([':completed_at' => $this->completedAt, ':id' => $this->id]);
+    }
+
+    public function delete(): void
+    {
+        if ($this->id !== null) {
+            $st = Database::get()->prepare('DELETE FROM activities WHERE id = :id');
+            $st->execute([':id' => $this->id]);
+        }
+    }
+}
+```
+
+```php
+<?php
 namespace App\Models;
 
 use App\Database;
@@ -526,125 +828,55 @@ final class Comment
 }
 ```
 
-## Discovery Project 8-5 — Integration script: insert, update, delete, select
+### Create Follow Model
+
+On your own and using the earlier classes as reference, create the `Follow` model in `classes/Models/Follow.php` with the following specifications:
+
+- Create camelCase properties to match the `follows` table columns (use appropriate types): `followerId`, `followeeId`, and `createdAt`.
+- Implement a static method `followersOf(int $userId): array` that fetches all followers of a given user.
+- Implement a static method `following(int $userId): array` that fetches all users that a given user is following.
+- Implement an instance method `insert(): void` to add a new follow relationship.
+- Implement an instance method `delete(): void` to remove a follow relationship.
+- Use `PDO::FETCH_CLASS` to hydrate results into `Follow` instances.
+- Use prepared statements for all database interactions.
+- Use aliases in your SQL queries to map database columns to class properties.
+
+### Test, Commit, and Push
+
+1. Open `demo-crud.php` and add code to test the new `Post`, `Comment`, `Activity`, and `Follow` classes. For example, you might create a new `Post`, add a `Comment`, create an `Activity`, and establish a `Follow` relationship between two users.
+2. Run the demo script in your Codespace terminal with `php demo-crud.php`.
+3. If everything works as expected, commit your changes with a message like "Discovery Project 8-4" and push to your repository.
+
+## Discovery Project 8-5 — Project Members and Reactions
 
 ### Goal
 
-Write a standalone script that uses the classes above to demonstrate inserting, updating, deleting, and selecting data across multiple tables.
+Create models for `project_members` and `reactions` with static fetchers and instance `insert()/delete()` methods.
 
 ### Steps
 
-1. Create `scripts/demo-crud.php` at your project root.
-2. Paste the following and run it in your Codespace terminal with `php scripts/demo-crud.php`.
+1. Create `classes/Models/ProjectMember.php` and `classes/Models/Reaction.php`.
+2. Implement the following for `ProjectMember`:
+   - Properties: `projectId`, `userId`, `role`, `addedAt`.
+   - Static method `membersOf(int $projectId): array` to fetch all members of a project.
+   - Instance method `insert(): void` to add a member to a project.
+   - Instance method `delete(): void` to remove a member from a project.
+   - Use prepared statements and `PDO::FETCH_CLASS` for fetching.
+   - Alias columns in SQL to match property names.
+3. Implement the following for `Reaction`:
+   - Properties: `id`, `postId`, `userId`, `commentId`, `type`.
+   - Static method `forPost(int $postId): array` to fetch all reactions for a post.
+   - Static method `forComment(int $commentId): array` to fetch all reactions for a comment.
+   - Instance method `insert(): void` to add a reaction.
+   - Instance method `delete(): void` to remove a reaction.
+   - Use prepared statements and `PDO::FETCH_CLASS` for fetching.
+   - Alias columns in SQL to match property names.
 
-```php
-<?php
-declare(strict_types=1);
+### Test, Commit, and Push
 
-require __DIR__ . '/../vendor/autoload.php';
-
-use App\Models\Company;
-use App\Models\Project;
-use App\Models\User;
-use App\Models\Profile;
-use App\Models\Post;
-use App\Models\Comment;
-
-echo "== INSERT ==\n";
-$acme = new Company();
-$acme->name = 'Acme, Inc.';
-$acme->websiteUrl = 'https://acme.example';
-$acme->industry = 'Manufacturing';
-$acme->notesMd = 'Top client.';
-$acme->insert();
-echo "Company #{$acme->id} created\n";
-
-$user = new User();
-$user->email = 'jane.doe@example.com';
-$user->passwordHash = password_hash('secret', PASSWORD_DEFAULT);
-$user->displayName = 'Jane Doe';
-$user->role = 'staff';
-$user->active = 1;
-$user->insert();
-echo "User #{$user->id} created\n";
-
-$profile = new Profile();
-$profile->userId = (int)$user->id;
-$profile->bioMd = 'Hello from Jane!';
-$profile->websiteUrl = 'https://janedoe.dev';
-$profile->upsert();
-echo "Profile for user #{$user->id} upserted\n";
-
-$proj = new Project();
-$proj->companyId = (int)$acme->id;
-$proj->slug = 'acme-website-redesign';
-$proj->title = 'Website Redesign';
-$proj->summaryMd = 'Update brand + CMS.';
-$proj->status = 'active';
-$proj->visibility = 'project';
-$proj->insert();
-echo "Project #{$proj->id} created\n";
-
-$post = new Post();
-$post->projectId = (int)$proj->id;
-$post->authorId = (int)$user->id;
-$post->activityId = null;
-$post->bodyMd = 'Kickoff meeting scheduled for Monday.';
-$post->visibility = 'project';
-$post->insert();
-echo "Post #{$post->id} created\n";
-
-$comment = new Comment();
-$comment->postId = (int)$post->id;
-$comment->authorId = (int)$user->id;
-$comment->bodyMd = 'I will share the agenda later today.';
-$comment->insert();
-echo "Comment #{$comment->id} created\n";
-
-echo "\n== SELECT ==\n";
-// Companies list
-foreach (Company::all() as $c) {
-    echo "- Company: {$c->name}\n";
-}
-
-// Find by slug
-$fetched = Project::findBySlug('acme-website-redesign');
-echo $fetched ? "Found project: {$fetched->title}\n" : "Project not found\n";
-
-// Project posts
-foreach (Post::forProject((int)$proj->id) as $p) {
-    echo "Post #{$p->id}: " . substr($p->bodyMd, 0, 40) . "...\n";
-}
-
-echo "\n== UPDATE ==\n";
-$acme->industry = 'Aerospace';
-$acme->update();
-echo "Company #{$acme->id} industry updated\n";
-
-$post->updateBody('Kickoff moved to Tuesday. Agenda attached.');
-echo "Post #{$post->id} body updated\n";
-
-echo "\n== DELETE ==\n";
-$comment->delete();
-echo "Comment #{$comment->id} deleted\n";
-
-$post->delete();
-echo "Post #{$post->id} deleted\n";
-
-$proj->delete();
-echo "Project #{$proj->id} deleted\n";
-
-$acme->delete();
-echo "Company #{$acme->id} deleted\n";
-
-// Optional: clean up user (may cascade or be restricted based on your FKs)
-// $user->delete();
-```
-
-### Validate and commit
-
-- Run the script above to verify CRUD operations.
-- Commit with a message such as “Discovery Project 8-5” and push.
+1. Open `demo-crud.php` and add code to test the new `ProjectMember` and `Reaction` classes. For example, you might add a member to a project and create reactions for a post and a comment.
+2. Run the demo script in your Codespace terminal with `php demo-crud.php`.
+3. If everything works as expected, commit your changes with a message like "Discovery Project 8-5" and push to your repository.
 
 ---
 
