@@ -93,14 +93,13 @@ final class Company
     /** @return Company[] */
     public static function all(): array
     {
-        $sql = 'SELECT
-                    id,
-                    name,
-                    website_url AS websiteUrl,
-                    industry,
-                    notes_md AS notesMd,
-                    created_at AS createdAt,
-                    updated_at AS updatedAt
+        $sql = 'SELECT id,
+                       name,
+                       website_url AS websiteUrl,
+                       industry,
+                       notes_md AS notesMd,
+                       created_at AS createdAt,
+                       updated_at AS updatedAt
                 FROM companies
                 ORDER BY name';
         $st = Database::get()->query($sql);
@@ -109,8 +108,14 @@ final class Company
 
     public static function find(int $id): ?self
     {
-        $sql = 'SELECT id, name, website_url AS websiteUrl, industry, notes_md AS notesMd, created_at AS createdAt, updated_at AS updatedAt
-                FROM companies WHERE id = :id';
+        $sql = 'SELECT id, 
+                       name, 
+                       website_url AS websiteUrl, 
+                       industry, notes_md AS notesMd, 
+                       created_at AS createdAt, 
+                       updated_at AS updatedAt
+                FROM companies 
+                WHERE id = :id';
         $st = Database::get()->prepare($sql);
         $st->execute([':id' => $id]);
         return $st->fetchObject(self::class) ?: null;
@@ -118,7 +123,8 @@ final class Company
 
     public function insert(): void
     {
-        $sql = 'INSERT INTO companies (name, website_url, industry, notes_md) VALUES (:name, :website_url, :industry, :notes_md)';
+        $sql = 'INSERT INTO companies (name, website_url, industry, notes_md) 
+                VALUES (:name, :website_url, :industry, :notes_md)';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':name'        => $this->name,
@@ -134,7 +140,12 @@ final class Company
         if ($this->id === null) {
             throw new \LogicException('Cannot update without id');
         }
-        $sql = 'UPDATE companies SET name = :name, website_url = :website_url, industry = :industry, notes_md = :notes_md WHERE id = :id';
+        $sql = 'UPDATE companies 
+                SET name = :name, 
+                    website_url = :website_url, 
+                    industry = :industry, 
+                    notes_md = :notes_md 
+                WHERE id = :id';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':name'        => $this->name,
@@ -180,8 +191,20 @@ final class Contact
     /** @return Contact[] */
     public static function forCompany(int $companyId): array
     {
-        $sql = 'SELECT id, company_id AS companyId, user_id AS userId, first_name AS firstName, last_name AS lastName, email, phone, title, notes_md AS notesMd, created_at AS createdAt, updated_at AS updatedAt
-                FROM contacts WHERE company_id = :cid ORDER BY first_name, last_name';
+        $sql = 'SELECT id, 
+                       company_id AS companyId, 
+                       user_id AS userId, 
+                       first_name AS firstName, 
+                       last_name AS lastName, 
+                       email, 
+                       phone, 
+                       title, 
+                       notes_md AS notesMd, 
+                       created_at AS createdAt, 
+                       updated_at AS updatedAt
+                FROM contacts 
+                WHERE company_id = :cid 
+                ORDER BY first_name, last_name';
         $st = Database::get()->prepare($sql);
         $st->execute([':cid' => $companyId]);
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
@@ -189,15 +212,41 @@ final class Contact
 
     public static function find(int $id): ?self
     {
-        $st = Database::get()->prepare('SELECT id, company_id AS companyId, user_id AS userId, first_name AS firstName, last_name AS lastName, email, phone, title, notes_md AS notesMd, created_at AS createdAt, updated_at AS updatedAt FROM contacts WHERE id = :id');
+        $st = Database::get()->prepare('SELECT id, 
+                                               company_id AS companyId, 
+                                               user_id AS userId, 
+                                               first_name AS firstName, 
+                                               last_name AS lastName, 
+                                               email, 
+                                               phone, 
+                                               title, 
+                                               notes_md AS notesMd, 
+                                               created_at AS createdAt, 
+                                               updated_at AS updatedAt 
+                                        FROM contacts 
+                                        WHERE id = :id');
         $st->execute([':id' => $id]);
         return $st->fetchObject(self::class) ?: null;
     }
 
     public function insert(): void
     {
-        $sql = 'INSERT INTO contacts (company_id, user_id, first_name, last_name, email, phone, title, notes_md)
-                VALUES (:company_id, :user_id, :first_name, :last_name, :email, :phone, :title, :notes_md)';
+        $sql = 'INSERT INTO contacts (company_id, 
+                                      user_id, 
+                                      first_name, 
+                                      last_name, 
+                                      email, 
+                                      phone, 
+                                      title, 
+                                      notes_md)
+                VALUES               (:company_id, 
+                                      :user_id, 
+                                      :first_name, 
+                                      :last_name, 
+                                      :email, 
+                                      :phone, 
+                                      :title, 
+                                      :notes_md)';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':company_id' => $this->companyId,
@@ -217,7 +266,15 @@ final class Contact
         if ($this->id === null) {
             throw new \LogicException('Cannot update without id');
         }
-        $sql = 'UPDATE contacts SET user_id = :user_id, first_name = :first_name, last_name = :last_name, email = :email, phone = :phone, title = :title, notes_md = :notes_md WHERE id = :id';
+        $sql = 'UPDATE contacts 
+                SET user_id = :user_id, 
+                    first_name = :first_name, 
+                    last_name = :last_name, 
+                    email = :email, 
+                    phone = :phone, 
+                    title = :title, 
+                    notes_md = :notes_md 
+                WHERE id = :id';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':user_id'    => $this->userId,
@@ -263,8 +320,18 @@ final class Project
     /** @return Project[] */
     public static function forCompany(int $companyId): array
     {
-        $sql = 'SELECT id, company_id AS companyId, slug, title, summary_md AS summaryMd, status, visibility, created_at AS createdAt, updated_at AS updatedAt
-                FROM projects WHERE company_id = :cid ORDER BY created_at DESC';
+        $sql = 'SELECT id, 
+                       company_id AS companyId, 
+                       slug, 
+                       title, 
+                       summary_md AS summaryMd, 
+                       status, 
+                       visibility, 
+                       created_at AS createdAt, 
+                       updated_at AS updatedAt
+                FROM projects 
+                WHERE company_id = :cid 
+                ORDER BY created_at DESC';
         $st = Database::get()->prepare($sql);
         $st->execute([':cid' => $companyId]);
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
@@ -272,8 +339,17 @@ final class Project
 
     public static function findBySlug(string $slug): ?self
     {
-        $sql = 'SELECT id, company_id AS companyId, slug, title, summary_md AS summaryMd, status, visibility, created_at AS createdAt, updated_at AS updatedAt
-                FROM projects WHERE slug = :slug';
+        $sql = 'SELECT id, 
+                       company_id AS companyId, 
+                       slug, 
+                       title, 
+                       summary_md AS summaryMd, 
+                       status, 
+                       visibility, 
+                       created_at AS createdAt, 
+                       updated_at AS updatedAt
+                FROM projects 
+                WHERE slug = :slug';
         $st = Database::get()->prepare($sql);
         $st->execute([':slug' => $slug]);
         return $st->fetchObject(self::class) ?: null;
@@ -286,8 +362,18 @@ final class Project
             $this->generateSlug();
         }
 
-        $sql = 'INSERT INTO projects (company_id, slug, title, summary_md, status, visibility)
-                VALUES (:company_id, :slug, :title, :summary_md, :status, :visibility)';
+        $sql = 'INSERT INTO projects (company_id, 
+                                      slug, 
+                                      title, 
+                                      summary_md, 
+                                      status, 
+                                      visibility)
+                VALUES               (:company_id, 
+                                      :slug, 
+                                      :title, 
+                                      :summary_md, 
+                                      :status, 
+                                      :visibility)';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':company_id' => $this->companyId,
@@ -305,7 +391,12 @@ final class Project
         if ($this->id === null) {
             throw new \LogicException('Cannot update without id');
         }
-        $sql = 'UPDATE projects SET title = :title, summary_md = :summary_md, status = :status, visibility = :visibility WHERE id = :id';
+        $sql = 'UPDATE projects 
+                SET title = :title, 
+                    summary_md = :summary_md, 
+                    status = :status, 
+                    visibility = :visibility 
+                WHERE id = :id';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':title'      => $this->title,
@@ -453,8 +544,17 @@ final class User
 
     public static function find(int $id): ?self
     {
-        $sql = 'SELECT id, email, password_hash AS passwordHash, display_name AS displayName, role, active, created_at AS createdAt, updated_at AS updatedAt, deleted_at AS deletedAt
-                FROM users WHERE id = :id';
+        $sql = 'SELECT id, 
+                       email, 
+                       password_hash AS passwordHash, 
+                       display_name AS displayName, 
+                       role, 
+                       active, 
+                       created_at AS createdAt, 
+                       updated_at AS updatedAt, 
+                       deleted_at AS deletedAt
+                FROM users 
+                WHERE id = :id';
         $st = Database::get()->prepare($sql);
         $st->execute([':id' => $id]);
         return $st->fetchObject(self::class) ?: null;
@@ -463,13 +563,33 @@ final class User
     /** @return User[] */
     public static function allActive(): array
     {
-        $st = Database::get()->query('SELECT id, email, password_hash AS passwordHash, display_name AS displayName, role, active, created_at AS createdAt, updated_at AS updatedAt, deleted_at AS deletedAt FROM users WHERE active = 1 AND deleted_at IS NULL ORDER BY display_name');
+        $st = Database::get()->query('SELECT id, 
+                                             email, 
+                                             password_hash AS passwordHash, 
+                                             display_name AS displayName, 
+                                             role, 
+                                             active, 
+                                             created_at AS createdAt, 
+                                             updated_at AS updatedAt, 
+                                             deleted_at AS deletedAt 
+                                      FROM users 
+                                      WHERE active = 1 AND deleted_at IS NULL 
+                                      ORDER BY display_name');
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
     }
 
     public function insert(): void
     {
-        $sql = 'INSERT INTO users (email, password_hash, display_name, role, active) VALUES (:email, :password_hash, :display_name, :role, :active)';
+        $sql = 'INSERT INTO users (email, 
+                                   password_hash, 
+                                   display_name, 
+                                   role, 
+                                   active) 
+                VALUES            (:email, 
+                                   :password_hash, 
+                                   :display_name, 
+                                   :role, 
+                                   :active)';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':email'         => $this->email,
@@ -486,7 +606,13 @@ final class User
         if ($this->id === null) {
             throw new \LogicException('Cannot update without id');
         }
-        $sql = 'UPDATE users SET email = :email, password_hash = :password_hash, display_name = :display_name, role = :role, active = :active WHERE id = :id';
+        $sql = 'UPDATE users 
+                SET email = :email, 
+                    password_hash = :password_hash, 
+                    display_name = :display_name, 
+                    role = :role, 
+                    active = :active 
+                WHERE id = :id';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':email'         => $this->email,
@@ -503,7 +629,9 @@ final class User
         if ($this->id === null) {
             return;
         }
-        $st = Database::get()->prepare('UPDATE users SET deleted_at = NOW() WHERE id = :id');
+        $st = Database::get()->prepare('UPDATE users 
+                                        SET deleted_at = NOW() 
+                                        WHERE id = :id');
         $st->execute([':id' => $this->id]);
     }
 
@@ -512,7 +640,9 @@ final class User
         if ($this->id === null) {
             return;
         }
-        $st = Database::get()->prepare('UPDATE users SET deleted_at = NULL WHERE id = :id');
+        $st = Database::get()->prepare('UPDATE users 
+                                        SET deleted_at = NULL 
+                                        WHERE id = :id');
         $st->execute([':id' => $this->id]);
     }
 
@@ -555,8 +685,13 @@ final class Profile
 
     public static function findByUserId(int $userId): self
     {
-        $sql = 'SELECT user_id AS userId, bio_md AS bioMd, website_url AS websiteUrl, location, avatar_url AS avatarUrl
-                FROM profiles WHERE user_id = :uid';
+        $sql = 'SELECT user_id AS userId, 
+                       bio_md AS bioMd, 
+                       website_url AS websiteUrl, 
+                       location, 
+                       avatar_url AS avatarUrl
+                FROM profiles 
+                WHERE user_id = :uid';
         $st = Database::get()->prepare($sql);
         $st->execute([':uid' => $userId]);
         $profile = $st->fetchObject(self::class);
@@ -573,8 +708,14 @@ final class Profile
     public function upsert(): void
     {
         // Simple upsert: try update; if 0 rows, insert
-        // In MySQL 8+, we could use INSERT ... ON DUPLICATE KEY UPDATE instead, but that isn't supported in all database platforms.
-        $update = Database::get()->prepare('UPDATE profiles SET bio_md = :bio_md, website_url = :website_url, location = :location, avatar_url = :avatar_url WHERE user_id = :user_id');
+        // In MySQL 8+, we could use INSERT ... ON DUPLICATE KEY UPDATE instead, 
+        // but that isn't supported in all database platforms.
+        $update = Database::get()->prepare('UPDATE profiles 
+                                            SET bio_md = :bio_md, 
+                                                website_url = :website_url, 
+                                                location = :location, 
+                                                avatar_url = :avatar_url 
+                                            WHERE user_id = :user_id');
         $update->execute([
             ':bio_md'     => $this->bioMd,
             ':website_url'=> $this->websiteUrl,
@@ -583,7 +724,17 @@ final class Profile
             ':user_id'    => $this->userId,
         ]);
         if ($update->rowCount() === 0) {
-            $insert = Database::get()->prepare('INSERT INTO profiles (user_id, bio_md, website_url, location, avatar_url) VALUES (:user_id, :bio_md, :website_url, :location, :avatar_url)');
+            $sql = 'INSERT INTO profiles (user_id, 
+                                          bio_md, 
+                                          website_url, 
+                                          location, 
+                                          avatar_url) 
+                    VALUES               (:user_id, 
+                                          :bio_md, 
+                                          :website_url, 
+                                          :location, 
+                                          :avatar_url)';
+            $insert = Database::get()->prepare($sql);
             $insert->execute([
                 ':user_id'    => $this->userId,
                 ':bio_md'     => $this->bioMd,
@@ -615,7 +766,10 @@ final class UserWithProfile
     /** @return UserWithProfile[] */
     public static function all(): array
     {
-        $sql = 'SELECT u.id, u.display_name AS displayName, p.bio_md AS bioMd, p.website_url AS websiteUrl
+        $sql = 'SELECT u.id, 
+                       u.display_name AS displayName, 
+                       p.bio_md AS bioMd, 
+                       p.website_url AS websiteUrl
                 FROM users u LEFT JOIN profiles p ON p.user_id = u.id
                 WHERE u.active = 1 AND u.deleted_at IS NULL
                 ORDER BY u.display_name';
@@ -627,7 +781,7 @@ final class UserWithProfile
 
 ### Create User From Contact Example
 
-On your own, add a method to the `Contact` class to create a `User` from a `Contact`. It should:
+On your own, add a method `createUser(string $hashedPassword)` to the `Contact` class to create a `User` from a `Contact`. It should:
 
 - Create a new `User` instance.
 - Set the `User`'s `email` from the `Contact`'s `email` (remember, you can use the `$this` keyword to refer to the current object).
@@ -675,8 +829,17 @@ final class Post
     /** @return Post[] */
     public static function forProject(int $projectId): array
     {
-        $sql = 'SELECT id, project_id AS projectId, author_id AS authorId, activity_id AS activityId, body_md AS bodyMd, created_at AS createdAt, updated_at AS updatedAt, visibility
-                FROM posts WHERE project_id = :pid ORDER BY created_at DESC';
+        $sql = 'SELECT id, 
+                       project_id AS projectId, 
+                       author_id AS authorId, 
+                       activity_id AS activityId, 
+                       body_md AS bodyMd, 
+                       created_at AS createdAt, 
+                       updated_at AS updatedAt, 
+                       visibility
+                FROM posts 
+                WHERE project_id = :pid 
+                ORDER BY created_at DESC';
         $st = Database::get()->prepare($sql);
         $st->execute([':pid' => $projectId]);
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
@@ -684,7 +847,16 @@ final class Post
 
     public function insert(): void
     {
-        $sql = 'INSERT INTO posts (project_id, author_id, activity_id, body_md, visibility) VALUES (:project_id, :author_id, :activity_id, :body_md, :visibility)';
+        $sql = 'INSERT INTO posts (project_id, 
+                                   author_id, 
+                                   activity_id, 
+                                   body_md, 
+                                   visibility) 
+                VALUES            (:project_id, 
+                                   :author_id, 
+                                   :activity_id, 
+                                   :body_md, 
+                                   :visibility)';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':project_id' => $this->projectId,
@@ -702,14 +874,18 @@ final class Post
             throw new \LogicException('Cannot update without id');
         }
         $this->bodyMd = $newBody;
-        $st = Database::get()->prepare('UPDATE posts SET body_md = :body_md, updated_at = NOW() WHERE id = :id');
+        $st = Database::get()->prepare('UPDATE posts 
+                                        SET body_md = :body_md, 
+                                            updated_at = NOW() 
+                                        WHERE id = :id');
         $st->execute([':body_md' => $this->bodyMd, ':id' => $this->id]);
     }
 
     public function delete(): void
     {
         if ($this->id !== null) {
-            $st = Database::get()->prepare('DELETE FROM posts WHERE id = :id');
+            $st = Database::get()->prepare('DELETE FROM posts 
+                                            WHERE id = :id');
             $st->execute([':id' => $this->id]);
         }
     }
@@ -738,8 +914,18 @@ final class Activity
     /** @return Activity[] */
     public static function forContact(int $contactId): array
     {
-        $sql = 'SELECT id, contact_id AS contactId, user_id AS userId, type, subject, due_at AS dueAt, completed_at AS completedAt, notes_md AS notesMd, created_at AS createdAt
-                FROM activities WHERE contact_id = :cid ORDER BY created_at DESC';
+        $sql = 'SELECT id, 
+                       contact_id AS contactId, 
+                       user_id AS userId, 
+                       type, 
+                       subject, 
+                       due_at AS dueAt, 
+                       completed_at AS completedAt, 
+                       notes_md AS notesMd, 
+                       created_at AS createdAt
+                FROM activities 
+                WHERE contact_id = :cid 
+                ORDER BY created_at DESC';
         $st = Database::get()->prepare($sql);
         $st->execute([':cid' => $contactId]);
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
@@ -747,8 +933,20 @@ final class Activity
 
     public function insert(): void
     {
-        $sql = 'INSERT INTO activities (contact_id, user_id, type, subject, due_at, completed_at, notes_md)
-                VALUES (:contact_id, :user_id, :type, :subject, :due_at, :completed_at, :notes_md)';
+        $sql = 'INSERT INTO activities (contact_id, 
+                                        user_id, 
+                                        type, 
+                                        subject, 
+                                        due_at, 
+                                        completed_at, 
+                                        notes_md)
+                VALUES                 (:contact_id, 
+                                        :user_id, 
+                                        :type, 
+                                        :subject, 
+                                        :due_at, 
+                                        :completed_at, 
+                                        :notes_md)';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':contact_id'   => $this->contactId,
@@ -768,14 +966,20 @@ final class Activity
             throw new \LogicException('Cannot update without id');
         }
         $this->completedAt = $completedAt ?? date('Y-m-d H:i:s');
-        $st = Database::get()->prepare('UPDATE activities SET completed_at = :completed_at WHERE id = :id');
-        $st->execute([':completed_at' => $this->completedAt, ':id' => $this->id]);
+        $st = Database::get()->prepare('UPDATE activities 
+                                        SET completed_at = :completed_at 
+                                        WHERE id = :id');
+        $st->execute([
+            ':completed_at' => $this->completedAt, 
+            ':id' => $this->id
+        ]);
     }
 
     public function delete(): void
     {
         if ($this->id !== null) {
-            $st = Database::get()->prepare('DELETE FROM activities WHERE id = :id');
+            $st = Database::get()->prepare('DELETE FROM activities 
+                                            WHERE id = :id');
             $st->execute([':id' => $this->id]);
         }
     }
@@ -800,7 +1004,14 @@ final class Comment
     /** @return Comment[] */
     public static function forPost(int $postId): array
     {
-        $sql = 'SELECT id, post_id AS postId, author_id AS authorId, body_md AS bodyMd, created_at AS createdAt FROM comments WHERE post_id = :pid ORDER BY created_at ASC';
+        $sql = 'SELECT id, 
+                       post_id AS postId, 
+                       author_id AS authorId, 
+                       body_md AS bodyMd, 
+                       created_at AS createdAt 
+                FROM comments 
+                WHERE post_id = :pid 
+                ORDER BY created_at ASC';
         $st = Database::get()->prepare($sql);
         $st->execute([':pid' => $postId]);
         return $st->fetchAll(PDO::FETCH_CLASS, self::class);
@@ -808,7 +1019,12 @@ final class Comment
 
     public function insert(): void
     {
-        $sql = 'INSERT INTO comments (post_id, author_id, body_md) VALUES (:post_id, :author_id, :body_md)';
+        $sql = 'INSERT INTO comments (post_id, 
+                                      author_id, 
+                                      body_md) 
+                VALUES               (:post_id, 
+                                      :author_id, 
+                                      :body_md)';
         $st = Database::get()->prepare($sql);
         $st->execute([
             ':post_id'  => $this->postId,
@@ -821,7 +1037,8 @@ final class Comment
     public function delete(): void
     {
         if ($this->id !== null) {
-            $st = Database::get()->prepare('DELETE FROM comments WHERE id = :id');
+            $st = Database::get()->prepare('DELETE FROM comments 
+                                            WHERE id = :id');
             $st->execute([':id' => $this->id]);
         }
     }
