@@ -279,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($email === '' || $password === '') {
         flash('error', 'Please enter both email and password.');
-        redirect('/login.php');
+        redirect(constructUrl('login'));
     }
 
     $user = User::findByEmail($email);
@@ -303,32 +303,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // GET request: show the login form
 ?>
-    <h2>Login</h2>
-    <form method="post" action="<?php echo constructUrl('login'); ?>" autocomplete="off">
-        <?php csrfField(); ?>
-        <div>
-            <label for="email">Email</label><br>
-            <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
-            >
+<div class="container my-5">
+    <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+        <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+            <h1>Login</h1>
+            <form method="post" action="<?php echo constructUrl('login'); ?>" autocomplete="off">
+                <?php csrfField(); ?>
+                <div>
+                    <label for="email">Email</label><br>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                    >
+                </div>
+                <div style="margin-top:.5rem;">
+                    <label for="password">Password</label><br>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                    >
+                </div>
+                <div style="margin-top:1rem;">
+                    <button type="submit">Log In</button>
+                </div>
+            </form>
         </div>
-        <div style="margin-top:.5rem;">
-            <label for="password">Password</label><br>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                required
-            >
-        </div>
-        <div style="margin-top:1rem;">
-            <button type="submit">Log In</button>
-        </div>
-    </form>
+    </div>
+</div>
 ```
 
 3. **Add a route for login**
@@ -389,32 +395,29 @@ Commit with a message like `Discovery Project 9-2` and push.
 
 ### Steps
 
-1. **Create a `require-login.php` helper**
+1. **Create a `requireLogin()` helper function**
 
-Create `includes/require-login.php`:
+Open `includes/bootstrap.php` and add the following at the end:
 
 ```php
-<?php
-// includes/require-login.php
-
-require __DIR__ . '/bootstrap.php';
-
-if (!isLoggedIn()) {
-    flash('error', 'Please log in to access that page.');
-    redirect('/login.php');
+function requireLogin(): void
+{
+    if (!isLoggedIn()) {
+        flash('error', 'Please log in to access that page.');
+        redirect(constructUrl('login'));
+    }
 }
 ```
 
-Any script that needs protection will include this file instead of including `bootstrap.php` directly.
+Any script that needs protection will call this function.
 
 2. **Implement logout**
 
-Create `public/logout.php`:
+Create `includes/logout.php`:
 
 ```php
 <?php
-// public/logout.php
-require __DIR__ . '/../includes/bootstrap.php';
+// includes/logout.php
 
 if (isLoggedIn()) {
     // Clear session data
@@ -431,56 +434,51 @@ if (isLoggedIn()) {
             $params['httponly']
         );
     }
+    session_unset();
     session_destroy();
     flash('success', 'You have been logged out.');
 } else {
     flash('success', 'You are already logged out.');
 }
 
-redirect('/index.php');
+redirect(constructUrl(''));
 ```
+
+In `public/index.php`, add a case for `logout` in the routing `switch` block to include `includes/logout.php`.
 
 3. **Protect the dashboard (and any other sensitive pages)**
 
-Create `public/dashboard.php`:
+Create `includes/dashboard.php`:
 
 ```php
 <?php
-// public/dashboard.php
-require __DIR__ . '/../includes/require-login.php';
-require __DIR__ . '/../includes/header.php';
+requireLogin();
 ?>
-    <h2>Dashboard</h2>
-    <p>Welcome, <?= htmlspecialchars(currentUser()->displayName) ?>.</p>
+<div class="container my-5">
+    <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+        <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+            <h1>Dashboard</h1>
+            <p>Welcome, <?= htmlspecialchars(currentUser()->displayName) ?>.</p>
 
-    <ul>
-        <li><a href="/companies.php">View companies</a> (example)</li>
-        <li><a href="/projects.php">View projects</a> (example)</li>
-        <li><a href="/activities.php">View activities</a> (example)</li>
-    </ul>
+            <ul>
+                <li><a href="/companies">View companies</a> (example)</li>
+                <li><a href="/projects">View projects</a> (example)</li>
+                <li><a href="/activities">View activities</a> (example)</li>
+            </ul>
 
-    <p>We’ll build out this dashboard further in the next discovery project.</p>
-<?php
-require __DIR__ . '/../includes/footer.php';
+            <p>We’ll build out this dashboard further in the next discovery project.</p>
+        </div>
+    </div>
+</div>
 ```
 
-If you have existing pages that should only be accessible to logged-in users (for example, `companies.php`, `contacts.php`), change their first line from:
-
-```php
-require __DIR__ . '/../includes/bootstrap.php';
-```
-
-to:
-
-```php
-require __DIR__ . '/../includes/require-login.php';
-```
+In `public/index.php`, add a case for `dashboard` in the routing `switch` block to include `includes/dashboard.php`.
 
 4. **Verify navigation behavior**
 
-* When logged out, the nav should only show `Home` and `Login`.
-* When logged in, it should show `Dashboard` and `Logout`, plus your greeting.
-* Try accessing `/dashboard.php` while logged out; confirm you’re redirected to `/login.php` with a flash message.
+* When logged out, the nav should not show `Dashboard` and `Logout` and should show `Login`.
+* When logged in, it should show `Dashboard` and `Logout`.
+* Try accessing `/dashboard` while logged out; confirm you’re redirected to `/login` with a flash message.
 
 5. **Commit and push**
 
@@ -549,14 +547,18 @@ public static function membershipsForUser(int $userId): array
 }
 ```
 
-3. **Enhance `dashboard.php` to use the models**
+3. **Create a `Project::find()` method**
 
-Update `public/dashboard.php`:
+On your own, add a public static method called `find` to `classes/Models/Project.php` that takes a project ID and returns a `Project` instance or `null` if not found. Use the existing `findBySlug()` method as a guide.
+
+4. **Enhance `dashboard.php` to use the models**
+
+Update `includes/dashboard.php`:
 
 ```php
 <?php
-// public/dashboard.php
-require __DIR__ . '/../includes/require-login.php';
+// includes/dashboard.php
+requireLogin();
 
 use App\Models\Profile;
 use App\Models\Project;
@@ -568,83 +570,79 @@ $profile = $user?->getProfile();
 $memberships = ProjectMember::membershipsForUser($user->id);
 $activities  = Activity::forUser($user->id);
 
-require __DIR__ . '/../includes/header.php';
 ?>
-    <h2>Dashboard</h2>
-    <p>Welcome, <?= htmlspecialchars($user->displayName) ?>.</p>
+<div class="container my-5">
+    <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+        <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+            <h1>Dashboard</h1>
+            <p>Welcome, <?= htmlspecialchars($user->displayName) ?>.</p>
 
-    <section>
-        <h3>Your Profile</h3>
-        <p><strong>Email:</strong> <?= htmlspecialchars($user->email) ?></p>
-        <?php if ($profile): ?>
-            <p><strong>Website:</strong>
-                <?= $profile->websiteUrl
-                    ? '<a href="' . htmlspecialchars($profile->websiteUrl) . '">' . htmlspecialchars($profile->websiteUrl) . '</a>'
-                    : '—' ?>
-            </p>
-            <p><strong>Location:</strong> <?= htmlspecialchars($profile->location ?? '—') ?></p>
-        <?php else: ?>
-            <p>No profile yet.</p>
-        <?php endif; ?>
-    </section>
+            <section>
+                <h3>Your Profile</h3>
+                <p><strong>Email:</strong> <?= htmlspecialchars($user->email) ?></p>
+                <?php if ($profile): ?>
+                    <p><strong>Website:</strong>
+                        <?= $profile->websiteUrl
+                            ? '<a href="' . htmlspecialchars($profile->websiteUrl) . '">' . htmlspecialchars($profile->websiteUrl) . '</a>'
+                            : '—' ?>
+                    </p>
+                    <p><strong>Location:</strong> <?= htmlspecialchars($profile->location ?? '—') ?></p>
+                <?php else: ?>
+                    <p>No profile yet.</p>
+                <?php endif; ?>
+            </section>
 
-    <section>
-        <h3>Your Projects</h3>
-        <?php if (!$memberships): ?>
-            <p>You are not a member of any projects yet.</p>
-        <?php else: ?>
-            <ul>
-                <?php foreach ($memberships as $m): ?>
-                    <?php $project = Project::findBySlug('dummy'); // placeholder to show pattern ?>
-                    <!-- In your real code, you might add a Project::find(int $id) method and use $m->projectId -->
-                    <li>
-                        Project #<?= (int)$m->projectId ?> —
-                        Role: <?= htmlspecialchars($m->role) ?>
-                        (added <?= htmlspecialchars($m->addedAt) ?>)
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-            <p><em>On your own, add a proper Project::find(int $id) method to show project titles here.</em></p>
-        <?php endif; ?>
-    </section>
+            <section>
+                <h3>Your Projects</h3>
+                <?php if (!$memberships): ?>
+                    <p>You are not a member of any projects yet.</p>
+                <?php else: ?>
+                    <ul>
+                        <?php foreach ($memberships as $m): ?>
+                            <?php $project = Project::find((int)$m->projectId); ?>
+                            <li>
+                                Project <?= htmlspecialchars($project?->title ?? (string)(int)$m->projectId) ?> —
+                                Role: <?= htmlspecialchars($m->role) ?>
+                                (added <?= htmlspecialchars($m->addedAt) ?>)
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </section>
 
-    <section>
-        <h3>Your Activities</h3>
-        <?php if (!$activities): ?>
-            <p>You have no assigned activities.</p>
-        <?php else: ?>
-            <ul>
-                <?php foreach ($activities as $a): ?>
-                    <li>
-                        [<?= htmlspecialchars($a->type) ?>]
-                        <?= htmlspecialchars($a->subject) ?>
-                        <?php if ($a->dueAt): ?>
-                            — due <?= htmlspecialchars($a->dueAt) ?>
-                        <?php endif; ?>
-                        <?php if ($a->completedAt): ?>
-                            — completed <?= htmlspecialchars($a->completedAt) ?>
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-    </section>
-<?php
-require __DIR__ . '/../includes/footer.php';
+            <section>
+                <h3>Your Activities</h3>
+                <?php if (!$activities): ?>
+                    <p>You have no assigned activities.</p>
+                <?php else: ?>
+                    <ul>
+                        <?php foreach ($activities as $a): ?>
+                            <li>
+                                [<?= htmlspecialchars($a->type) ?>]
+                                <?= htmlspecialchars($a->subject) ?>
+                                <?php if ($a->dueAt): ?>
+                                    — due <?= htmlspecialchars($a->dueAt) ?>
+                                <?php endif; ?>
+                                <?php if ($a->completedAt): ?>
+                                    — completed <?= htmlspecialchars($a->completedAt) ?>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </section>
+        </div>
+    </div>
+</div>
 ```
 
-> Note: The snippet above uses a placeholder for project titles. On your own, you can:
->
-> * Add `public static function find(int $id): ?self` to `Project`, and
-> * Use it inside the loop to show the project’s `title` alongside the role.
+5. **Test**
 
-4. **Test**
+* Log in as a user who has at least one `project_members` row and a couple of `activities` (you may need to add some records using phpMyAdmin).
+* Visit `/dashboard` and confirm that the data shown matches the logged-in user.
+* Log out and confirm that `/dashboard` is no longer accessible.
 
-* Log in as a user who has at least one `project_members` row and a couple of `activities`.
-* Visit `/dashboard.php` and confirm that the data shown matches the logged-in user.
-* Log out and confirm that `/dashboard.php` is no longer accessible.
-
-5. **Commit and push**
+6. **Commit and push**
 
 Commit with a message like `Discovery Project 9-4` and push.
 
@@ -674,8 +672,10 @@ Pick at least **three** forms in your project that perform state-changing action
 
 For each of these forms, make sure:
 
-* The script includes either `bootstrap.php` or `require-login.php`
+* Create the script in the `includes` folder and include it via routing in `public/index.php`
+* The script calls `requireLogin()` if it needs authentication
 * It uses `method="post"`
+* Add a link to the form from the Dashboard page for easy access during testing
 
 2. **Add the CSRF hidden field to each form**
 
@@ -688,7 +688,7 @@ Inside each `<form method="post" ...>` tag, add:
 Example:
 
 ```php
-<form method="post" action="/companies-create.php">
+<form method="post" action="/companies-create">
     <?php csrfField(); ?>
     <!-- rest of your inputs -->
 </form>
@@ -696,17 +696,17 @@ Example:
 
 3. **Validate the CSRF token in each POST handler**
 
-At the top of every script that processes the form, after including your bootstrap/require-login, call:
+At the top of every script that processes a form, after including your bootstrap and calling `requireLogin()`, call:
 
 ```php
 requireValidCsrfToken($_POST['csrf_token'] ?? null);
 ```
 
-Example: `public/companies-create.php`:
+Example: `includes/companies-create.php`:
 
 ```php
 <?php
-require __DIR__ . '/../includes/require-login.php';
+requireLogin();
 
 use App\Models\Company;
 
@@ -717,7 +717,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($name === '') {
         flash('error', 'Company name is required.');
-        redirect('/companies-create.php');
+        redirect(constructUrl('/companies-create'));
     }
 
     $company = new Company();
@@ -728,11 +728,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company->insert();
 
     flash('success', 'Company created.');
-    redirect('/companies.php');
+    redirect(constructUrl('/companies'));
 }
 
 // GET: show form
-require __DIR__ . '/../includes/header.php';
 ?>
     <h2>Create Company</h2>
     <form method="post">
@@ -740,7 +739,6 @@ require __DIR__ . '/../includes/header.php';
         <!-- your inputs -->
     </form>
 <?php
-require __DIR__ . '/../includes/footer.php';
 ```
 
 4. **Test CSRF behavior**
@@ -753,56 +751,7 @@ For at least one form:
 * Submit the form.
 * Confirm that you see the “Invalid CSRF token” message and that no database changes occur.
 
-5. **Extend protection to delete actions**
-
-If you have “delete” links that currently use GET requests like:
-
-```php
-<a href="/companies-delete.php?id=123">Delete</a>
-```
-
-Refactor them into small POST forms:
-
-```php
-<form method="post" action="/companies-delete.php" style="display:inline;">
-    <?php csrfField(); ?>
-    <input type="hidden" name="id" value="<?= (int)$company->id ?>">
-    <button type="submit" onclick="return confirm('Delete this company?');">
-        Delete
-    </button>
-</form>
-```
-
-Then in `companies-delete.php`:
-
-```php
-<?php
-require __DIR__ . '/../includes/require-login.php';
-
-use App\Models\Company;
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
-    echo 'Method not allowed.';
-    exit;
-}
-
-requireValidCsrfToken($_POST['csrf_token'] ?? null);
-
-$id = (int)($_POST['id'] ?? 0);
-$company = Company::find($id);
-
-if (!$company) {
-    flash('error', 'Company not found.');
-    redirect('/companies.php');
-}
-
-$company->delete();
-flash('success', 'Company deleted.');
-redirect('/companies.php');
-```
-
-6. **Commit and push**
+5. **Commit and push**
 
 Commit with a message like `Discovery Project 9-5` and push.
 
@@ -815,4 +764,4 @@ With these five discovery projects, you now have:
 * A simple dashboard that surfaces data from multiple tables for the current user
 * CSRF protection for state-changing forms across your app
 
-In your final project, you can reuse and extend these patterns to flesh out the full CRM/social experience. 
+In your final project, you can reuse and extend these patterns as needed. Great work!
