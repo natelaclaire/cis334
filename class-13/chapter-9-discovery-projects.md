@@ -583,7 +583,8 @@ $activities  = Activity::forUser($user->id);
                 <?php if ($profile): ?>
                     <p><strong>Website:</strong>
                         <?= $profile->websiteUrl
-                            ? '<a href="' . htmlspecialchars($profile->websiteUrl) . '">' . htmlspecialchars($profile->websiteUrl) . '</a>'
+                            ? '<a href="' . htmlspecialchars($profile->websiteUrl) . '">' 
+                            . htmlspecialchars($profile->websiteUrl) . '</a>'
                             : '—' ?>
                     </p>
                     <p><strong>Location:</strong> <?= htmlspecialchars($profile->location ?? '—') ?></p>
