@@ -15,6 +15,7 @@ Welcome back, everyone. We’ve reached the final week of our course. Throughout
 In software development, patterns give us a standard way to solve problems we encounter again and again. They aren’t copy-and-paste templates. Instead, they give us **proven structures** we can adapt to the challenges in our own applications.
 
 You’ve already used some patterns without naming them—like layering logic in functions, organizing code into classes, or separating database access from presentation.
+
 This week, we’ll look at patterns intentionally. You’ll learn how to apply them in PHP so you can write cleaner, more consistent code, and so your future projects become easier to build and maintain.
 
 ---
@@ -45,19 +46,6 @@ We’ll look at some of the most useful patterns for server-side PHP:
 * And a few others to help you structure your final project and future apps
 
 The goal isn’t memorizing every pattern. The goal is recognizing problems you can solve with patterns you know.
-
----
-
-## **Patterns in the Context of Your Final Project**
-
-Your final project will benefit directly from the patterns we cover. Even adding one or two can make your code easier to expand later. Think about:
-
-* How reusable your database layer is
-* Whether your form handlers share behavior
-* How you load and manage user-defined objects
-* How cleanly your application responds to changes in state
-
-Patterns give you a shared vocabulary for those decisions.
 
 ---
 
