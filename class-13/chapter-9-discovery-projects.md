@@ -307,7 +307,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
         <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
             <h1>Login</h1>
-            <form method="post" action="<?php echo constructUrl('login'); ?>" autocomplete="off">
+            <form method="post" action="<?php echo constructUrl('login'); ?>" 
+                  autocomplete="off">
                 <?php csrfField(); ?>
                 <div>
                     <label for="email">Email</label><br>
@@ -587,7 +588,8 @@ $activities  = Activity::forUser($user->id);
                             . htmlspecialchars($profile->websiteUrl) . '</a>'
                             : '—' ?>
                     </p>
-                    <p><strong>Location:</strong> <?= htmlspecialchars($profile->location ?? '—') ?></p>
+                    <p><strong>Location:</strong>
+                        <?= htmlspecialchars($profile->location ?? '—') ?></p>
                 <?php else: ?>
                     <p>No profile yet.</p>
                 <?php endif; ?>
@@ -602,7 +604,8 @@ $activities  = Activity::forUser($user->id);
                         <?php foreach ($memberships as $m): ?>
                             <?php $project = Project::find((int)$m->projectId); ?>
                             <li>
-                                Project <?= htmlspecialchars($project?->title ?? (string)(int)$m->projectId) ?> —
+                                Project <?= htmlspecialchars($project?->title ?? 
+                                            (string)(int)$m->projectId) ?> —
                                 Role: <?= htmlspecialchars($m->role) ?>
                                 (added <?= htmlspecialchars($m->addedAt) ?>)
                             </li>
