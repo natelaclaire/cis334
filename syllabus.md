@@ -1,10 +1,10 @@
 ---
 layout: default
-title: Syllabus (Fall 2025 Online)
+title: Syllabus (Fall 2026 Online)
 nav_order: 2
 ---
 
-# CIS 334: PHP and MySQL: Fall 2025 (Online)
+# CIS 334: PHP and MySQL: Fall 2026 (Online)
 
 ## Class Meetings
 
@@ -37,15 +37,7 @@ Any communications sent from my UMA email or from the Brightspace course will go
 
 ## Required Text and Materials
 
-<img src="images/9780538745840-cover.jpg" alt="Required textbook: PHP Programming with MySQL" width="200"/>
-
-- [_PHP Programming with MySQL_](https://www.cengage.com/c/php-programming-with-mysql-the-web-technologies-series-2e-gosselin-kokoska-easterbrooks/9780538745840/)
-  - by Don Gosselin, Diana Kokoska, Robert Easterbrooks.
-  - ISBN 13: 9780538745840 © 2010
-  - Publication date: 2010
-  - 712 pages
-  - Softcover
-- Optional: [_PHP Crash Course: The Complete, Modern, Hands-On Guide_](https://nostarch.com/php-crash-course)
+- [_PHP Crash Course: The Complete, Modern, Hands-On Guide_](https://nostarch.com/php-crash-course)
   - by Matt Smith
   - ISBN-13: 9781718502529
   - Publication date: December 2024
@@ -55,7 +47,17 @@ Any communications sent from my UMA email or from the Brightspace course will go
 
 ## Required Software
 
-Students will need a free GitHub account. Instructions will be provided in the first module. We will use GitHub Codespaces, a Web-based development environment, to complete assignments.
+During the first week of the course, I will provide instructions for setting up the required software. Students will need:
+
+- A free [GitHub](https://github.com/) account to access the course materials and submit assignments.
+- A git client, such as the free and easy to use [GitHub Desktop](https://desktop.github.com/), to manage the course materials and submit assignments.
+- A code editor, such as the free [Visual Studio Code](https://code.visualstudio.com/). I will be using Visual Studio Code in the videos and will walk through installing some extensions that are helpful for PHP coding, but you may use any code editor or PHP IDE of your choice.
+- A desktop development environment for PHP and MySQL with a database administration tool such as phpMyAdmin. In the videos, I will be using [ServBay](https://www.servbay.com/), which is available for Windows and macOS (when installing, choose the "PHP Developer" option and the "Apache" Web server). A few of the other free options:
+  - [XAMPP](https://www.apachefriends.org/index.html) (Windows, Mac, Linux)
+  - [MAMP](https://www.mamp.info/en/) (Mac, Windows)
+  - [Laragon](https://laragon.org/) (Windows)
+- A fake SMTP server for testing email functionality, such as the free [Mailpit](https://mailpit.axllent.org/), which is available for Windows, macOS, and Linux, and will be used in the videos.
+- Potentially an SFTP client (*not server*), such as the free [FileZilla client](https://filezilla-project.org/), and an SSH client, which is available as part of most modern operating systems.
 
 ## Learning Outcomes
 
@@ -97,28 +99,27 @@ To maximize your learning experience, you should:
 - Complete Comprehension Check Quizzes in Brightspace on or before the due date.
 - Complete Reinforcement Exercises* on or before the due date.
 - Complete Discovery Projects* on or before the due date.
-- Complete Final Exam on or before the due date.
+- Complete Final Project on or before the due date.
 
-*Note: The Applied Learning Activities, Reinforcement Exercises, and Discovery Projects will be completed by modifying the code provided via GitHub Classroom assignments and committing your work to the assignment's repository.
+*Note: The Applied Learning Activities, Reinforcement Exercises, and Discovery Projects will be completed by modifying the code provided via GitHub and committing your work to the assignment's repository.
 
-| Week        | Lesson / Assignment Topic                                              | Due Date (11:59pm) |
-| ----------- | ---------------------------------------------------------------------- | ------------------ |
-| 1           | Course Introduction & Dynamic Web Concepts                             | September 6        |
-| 2           | Chapter 10 – Developing Object-Oriented PHP, Part 1                    | September 13       |
-| 3           | Chapter 10 – Developing Object-Oriented PHP, Part 2                    | September 20       |
-| 4           | Chapter 10 – Discovery Projects - **Final Project Topic Due**          | September 27       |
-| 5           | Chapter 7 – Working with Databases and MySQL, Part 1                   | October 4          |
-| 6           | Chapter 7 – Working with Databases and MySQL, Part 2                   | October 11         |
-| 7           | Chapter 7 – Discovery Projects                                         | October 18         |
-| 8           | Chapter 8 – Manipulating MySQL Databases with PHP, Part 1              | October 25         |
-| 9           | Chapter 8 – Manipulating MySQL Databases with PHP, Part 2              | November 1         |
-| 10          | Chapter 8 – Discovery Projects                                         | November 8         |
-| 11          | Chapter 9 – Managing State Information, Part 1                         | November 15        |
-| 12          | Chapter 9 – Managing State Information, Part 2                         | November 22        |
-| 13          | **Thanksgiving Recess - No Assignments Due**                           | November 29        |
-| 14          | Chapter 9 – Discovery Projects                                         | December 6         |
-| 15          | Appendix E – Error Handling and Debugging                              | December 13        |
-| 16          | Reusable Design Patterns - **Final Project and Final Exam Due!**       | December 20        |
+| Week | Topics                                                      | Chapters     | Content Available  | Due Date (11:59pm)            |
+| ---- | ----------------------------------------------------------- | ------------ | ------------------ | ----------------------------- |
+| 1    | Getting Set Up: A local workflow for PHP development        | -            | August 30          | September 5                   |
+| 2    | Intro to OOP concepts, declaring classes and objects        | 17-18        | September 6        | September 12                  |
+| 3    | Inheritance and re-use                                      | 19           | September 13       | September 19                  |
+| 4    | Namespaces and Composer                                     | 20           | September 20       | September 26                  |
+| 5    | Template design with Twig                                   | 21           | September 27       | October 3                     |
+| 6    | Structuring OOP web apps                                    | 22           | October 4          | October 10                    |
+| 7    | Error handling with exceptions                              | 23           | October 11         | October 17                    |
+| 8    | Logging events, messages, and transactions                  | 24           | October 18         | October 24                    |
+| 9    | Static methods, properties, and enumerations                | 25           | October 25         | October 31                    |
+| 10   | Abstract methods, interfaces, and traits                    | 26           | November 1         | November 7                    |
+| 11   | Intro to databases, PDO, and database connections           | 27-28        | November 8         | November 14                   |
+| 12   | CRUD operations                                             | 29           | November 15        | November 21                   |
+| 13   | ORM and database security                                   | 30           | November 22        | December 5                    |
+| 14   | Dates and times                                             | 31           | December 6         | December 12                   |
+| 15   | Integrating it all and final project due                    | 17–31 review | December 13        | December 18                   |
 
 ### Final Project
 
@@ -130,12 +131,10 @@ Students may request accommodation for their observance of a religious holiday. 
 
 ## Grading Criteria
 
-- **10%** of your grade will be determined by Applied Learning Activities. ***Note:** In order to receive credit for Applied Learning Activities, there must be evidence in your repository that you followed along with the weekly tutorial videos.*
-- **25%** of your grade will be determined by Reinforcement Exercises.
-- **20%** of your grade will be determined by Discovery Projects.
+- **35%** of your grade will be determined by Reinforcement Exercises.
+- **25%** of your grade will be determined by Discovery Projects.
 - **15%** of your grade will be determined by Comprehension Check Quizzes.
-- **10%** of your grade will be determined by Final Exam.
-- **20%** of your grade will be determined by the Final Project.
+- **25%** of your grade will be determined by the Final Project.
 
 A 94-100%, A- 90-93%, B+ 87-89%, B 83-86%, B- 80-82%, C+ 77-79%, C 73-76%, C- 70-72%, D+ 67-69%, D 63-66%, D- 60-62%, F below 60%.
 
