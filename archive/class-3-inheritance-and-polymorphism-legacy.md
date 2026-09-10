@@ -1,10 +1,12 @@
 ---
 layout: default
-title: 4.1 Inheritance and Polymorphism
-nav_order: 1
+title: Archived Inheritance and Polymorphism Notes
+nav_exclude: true
 ---
 
-# 4.1 Inheritance and Polymorphism
+# 3.1 Inheritance and Polymorphism
+
+Historical reference only. Replaced by the focused Class 3 tutorials. Interfaces and traits are preserved here for a future advanced OOP lesson; the examples below have not been updated or validated for the current sequence.
 
 This lesson expands the inheritance and overriding preview in Chapter 17. Its detailed implementation belongs with Chapter 19 rather than the Class 2 coverage of Chapters 17–18.
 

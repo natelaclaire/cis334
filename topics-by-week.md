@@ -20,9 +20,9 @@ nav_order: 3
 
 ## Week 3
 
-* Videos:
-* Discussion:
-* Assignment:
+* Videos: [Class 3 tutorial roadmap](class-3/3.0-class-3-overview.md) — Chapter 19 inheritance, Override, parent calls, and introductory ERDs.
+* Practice: [Five reinforcement exercises](class-3/3.9-class-3-reinforcement-exercises.md).
+* Comprehension check: [Ten multiple-choice questions](class-3/3.11-class-3-comprehension-check.md).
 
 ## Week 4
 
