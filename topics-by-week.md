@@ -26,9 +26,9 @@ nav_order: 3
 
 ## Week 4
 
-* Videos:
-* Discussion:
-* Assignment:
+* Videos: [Class 4 tutorial roadmap](class-4/4.0-class-4-overview.md) — Chapter 20 namespaces, Composer, PSR-4, and packages.
+* Practice: [Five reinforcement exercises](class-4/4.9-class-4-reinforcement-exercises.md).
+* Comprehension check: [Ten multiple-choice questions](class-4/4.11-class-4-comprehension-check.md).
 
 ## Week 5
 
