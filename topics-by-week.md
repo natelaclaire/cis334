@@ -32,9 +32,9 @@ nav_order: 3
 
 ## Week 5
 
-* Videos:
-* Discussion:
-* Assignment:
+* Videos: [Class 5 tutorial roadmap](class-5/5.0-class-5-overview.md) — Chapter 21 Twig, front controllers, template inheritance, and shared styling.
+* Practice: [Five reinforcement exercises](class-5/5.9-class-5-reinforcement-exercises.md).
+* Comprehension check: [Ten multiple-choice questions](class-5/5.11-class-5-comprehension-check.md).
 
 ## Week 6
 
